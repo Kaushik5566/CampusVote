@@ -14,16 +14,16 @@ export default function HomePage() {
           className="object-cover"
           data-ai-hint="students group"
         />
-        <div className="absolute inset-0 bg-background/60 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-black/50"></div>
       </div>
       <main className="z-10 flex flex-col items-center justify-center p-8 text-center">
         <div className="mb-6 rounded-full bg-primary/20 p-4 shadow-lg">
           <Logo className="h-24 w-24 text-primary" />
         </div>
-        <h1 className="font-headline text-5xl font-bold text-primary-foreground md:text-6xl text-shadow-lg shadow-black/20">
+        <h1 className="font-headline text-5xl font-bold text-white md:text-6xl drop-shadow-lg">
           CampusVote
         </h1>
-        <p className="mt-4 max-w-lg text-lg text-primary-foreground/90 text-shadow-md shadow-black/20">
+        <p className="mt-4 max-w-lg text-lg text-slate-100 drop-shadow-md">
           The simple, secure, and modern way to cast your vote in college elections.
         </p>
         <div className="mt-12 flex flex-col gap-4 sm:flex-row">
