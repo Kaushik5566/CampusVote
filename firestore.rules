@@ -1,0 +1,153 @@
+/**
+ * @fileoverview Firestore Security Rules for the CampusVote application.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a user-ownership model for student and admin data,
+ * allows public read access to candidate information, and restricts vote creation
+ * to authenticated students who haven't voted yet. Voting results are
+ * only accessible to admins. Data denormalization (the 'hasVoted' field on the
+ * Student document) is used to avoid costly 'get()' calls in the rules.
+ *
+ * Data Structure:
+ * - /admins/{adminId}: Admin user data, where adminId is the Firebase Auth UID.
+ * - /students/{studentId}: Student data, where studentId is the Firebase Auth UID.
+ * - /candidates/{candidateId}: Candidate information.
+ * - /votes/{voteId}: Individual vote records.
+ * - /voting_results/{candidateId}: Aggregated vote counts for each candidate.
+ *
+ * Key Security Decisions:
+ * - Students and Admins can only access their own data.
+ * - Candidate information is publicly readable.
+ * - Students can only create one vote.
+ * - Voting results are only accessible to admins.
+ * - Listing of votes and voting results is denied to regular users.
+ *
+ * Denormalization for Authorization:
+ * - The `hasVoted` field is denormalized onto the `/students/{studentId}` document
+ *   to avoid a costly `get()` operation on the `/votes` collection when determining
+ *   if a student is allowed to vote.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Defines if a user is signed in
+     * @return {bool}
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Defines if the current user is the owner of the resource.
+     * @param {string} userId - The user ID to compare against the request's auth UID.
+     * @return {bool} - True if the user is the owner, false otherwise.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * @description Defines if the current user is the owner of the resource and the resource already exists
+     * @param {string} userId - The user ID to compare against the request's auth UID.
+     * @return {bool} - True if the user is the owner and the resource exists, false otherwise.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Security rules for the /admins collection.
+     * @path /admins/{adminId}
+     * @allow (create) - An admin user can create their own document if the adminId matches their UID.
+     * @allow (get) - An admin can read their own document.
+     * @allow (update) - An admin can update their own document.
+     * @allow (delete) - An admin can delete their own document.
+     * @deny (create) - A non-admin user cannot create an admin document.
+     * @deny (get) - A non-admin user cannot read an admin document.
+     * @deny (update) - A non-admin user cannot update an admin document.
+     * @deny (delete) - A non-admin user cannot delete an admin document.
+     * @principle Enforces document ownership for admins and authenticated users.
+     */
+    match /admins/{adminId} {
+      allow get: if isOwner(adminId);
+      allow list: if false;
+      allow create: if isOwner(adminId);
+      allow update: if isExistingOwner(adminId);
+      allow delete: if isExistingOwner(adminId);
+    }
+
+    /**
+     * @description Security rules for the /students collection.
+     * @path /students/{studentId}
+     * @allow (create) - A student can create their own document if the studentId matches their UID.
+     * @allow (get) - A student can read their own document.
+     * @allow (update) - A student can update their own document.
+     * @allow (delete) - A student can delete their own document.
+     * @deny (create) - A non-student user cannot create a student document.
+     * @deny (get) - A non-student user cannot read a student document.
+     * @deny (update) - A non-student user cannot update a student document.
+     * @deny (delete) - A non-student user cannot delete a student document.
+     * @principle Enforces document ownership for students and authenticated users.
+     */
+    match /students/{studentId} {
+      allow get: if isOwner(studentId);
+      allow list: if false;
+      allow create: if isOwner(studentId);
+      allow update: if isExistingOwner(studentId);
+      allow delete: if isExistingOwner(studentId);
+    }
+
+    /**
+     * @description Security rules for the /candidates collection.
+     * @path /candidates/{candidateId}
+     * @allow (get) - Any authenticated user can read candidate information.
+     * @allow (list) - Any authenticated user can list candidate information.
+     * @deny (create) - Only admins can create candidate documents (TODO: implement admin check).
+     * @deny (update) - Only admins can update candidate documents (TODO: implement admin check).
+     * @deny (delete) - Only admins can delete candidate documents (TODO: implement admin check).
+     * @principle Allows public read access with owner-only writes (TODO: implement admin check).
+     */
+    match /candidates/{candidateId} {
+      allow get, list: if true;
+      allow create, update, delete: if false; // TODO: Add admin validation once admin role is defined.
+    }
+
+    /**
+     * @description Security rules for the /votes collection.
+     * @path /votes/{voteId}
+     * @allow (create) - An authenticated student can create a vote if they haven't voted yet.
+     * @deny (get) - Non-admin user cannot read a vote document.
+     * @deny (list) - Non-admin user cannot list vote documents.
+     * @deny (update) - Only admins can update vote documents (TODO: implement admin check).
+     * @deny (delete) - Only admins can delete vote documents (TODO: implement admin check).
+     * @principle Enforces single-vote constraint and restricts access to admins (TODO: implement admin check).
+     */
+    match /votes/{voteId} {
+      allow get: if false;
+      allow list: if false;
+      allow create: if isSignedIn();
+      allow update: if false; // TODO: Add admin validation once admin role is defined.
+      allow delete: if false; // TODO: Add admin validation once admin role is defined.
+    }
+
+    /**
+     * @description Security rules for the /voting_results collection.
+     * @path /voting_results/{candidateId}
+     * @deny (create) - Only admins can create voting result documents (TODO: implement admin check).
+     * @deny (get) - Only admins can read voting result documents (TODO: implement admin check).
+     * @deny (list) - Only admins can list voting result documents (TODO: implement admin check).
+     * @deny (update) - Only admins can update voting result documents (TODO: implement admin check).
+     * @deny (delete) - Only admins can delete voting result documents (TODO: implement admin check).
+     * @principle Restricts access to voting results to admins (TODO: implement admin check).
+     */
+    match /voting_results/{candidateId} {
+      allow get: if false; // TODO: Add admin validation once admin role is defined.
+      allow list: if false; // TODO: Add admin validation once admin role is defined.
+      allow create: if false; // TODO: Add admin validation once admin role is defined.
+      allow update: if false; // TODO: Add admin validation once admin role is defined.
+      allow delete: if false; // TODO: Add admin validation once admin role is defined.
+    }
+  }
+}

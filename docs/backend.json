@@ -1,0 +1,248 @@
+{
+  "entities": {
+    "Student": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Student",
+      "type": "object",
+      "description": "Represents a student in the college e-voting system.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the student entity."
+        },
+        "collegeId": {
+          "type": "string",
+          "description": "The college-assigned identifier for the student."
+        },
+        "email": {
+          "type": "string",
+          "description": "The student's email address.",
+          "format": "email"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The student's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The student's last name."
+        },
+        "hasVoted": {
+          "type": "boolean",
+          "description": "Indicates whether the student has already voted."
+        }
+      },
+      "required": [
+        "id",
+        "collegeId",
+        "email",
+        "firstName",
+        "lastName",
+        "hasVoted"
+      ]
+    },
+    "Admin": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Admin",
+      "type": "object",
+      "description": "Represents an administrator user who can manage candidates and voting results.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the admin user."
+        },
+        "username": {
+          "type": "string",
+          "description": "Admin's username for login."
+        }
+      },
+      "required": [
+        "id",
+        "username"
+      ]
+    },
+    "Candidate": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Candidate",
+      "type": "object",
+      "description": "Represents a candidate for a specific position in the election.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the candidate."
+        },
+        "name": {
+          "type": "string",
+          "description": "The candidate's full name."
+        },
+        "position": {
+          "type": "string",
+          "description": "The position the candidate is running for."
+        },
+        "manifesto": {
+          "type": "string",
+          "description": "A brief statement of the candidate's platform."
+        },
+        "photoUrl": {
+          "type": "string",
+          "description": "URL of the candidate's photo.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "position",
+        "manifesto",
+        "photoUrl"
+      ]
+    },
+    "Vote": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Vote",
+      "type": "object",
+      "description": "Represents a vote cast by a student for a candidate.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the vote."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to Student. (Relationship: Student 1:N Vote)"
+        },
+        "candidateId": {
+          "type": "string",
+          "description": "Reference to Candidate. (Relationship: Candidate 1:N Vote)"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of when the vote was cast.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "candidateId",
+        "timestamp"
+      ]
+    },
+    "VotingResult": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "VotingResult",
+      "type": "object",
+      "description": "Stores the aggregated voting results for each candidate.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the voting result."
+        },
+        "candidateId": {
+          "type": "string",
+          "description": "Reference to Candidate. (Relationship: Candidate 1:1 VotingResult)"
+        },
+        "voteCount": {
+          "type": "number",
+          "description": "The number of votes received by the candidate."
+        }
+      },
+      "required": [
+        "id",
+        "candidateId",
+        "voteCount"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/admins/{adminId}",
+        "definition": {
+          "entityName": "Admin",
+          "schema": {
+            "$ref": "#/backend/entities/Admin"
+          },
+          "description": "Stores admin user data. Accessible only to admins. The 'adminId' is the Firebase Auth UID.",
+          "params": [
+            {
+              "name": "adminId",
+              "description": "The Firebase Auth UID of the admin user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/students/{studentId}",
+        "definition": {
+          "entityName": "Student",
+          "schema": {
+            "$ref": "#/backend/entities/Student"
+          },
+          "description": "Stores student data, including 'hasVoted' for single vote enforcement. The 'studentId' is the Firebase Auth UID.",
+          "params": [
+            {
+              "name": "studentId",
+              "description": "The Firebase Auth UID of the student user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/candidates/{candidateId}",
+        "definition": {
+          "entityName": "Candidate",
+          "schema": {
+            "$ref": "#/backend/entities/Candidate"
+          },
+          "description": "Stores candidate information. Accessible to both students (for viewing) and admins (for management).",
+          "params": [
+            {
+              "name": "candidateId",
+              "description": "Unique identifier for the candidate."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/votes/{voteId}",
+        "definition": {
+          "entityName": "Vote",
+          "schema": {
+            "$ref": "#/backend/entities/Vote"
+          },
+          "description": "Stores individual vote records. Each student can only create one vote document. Includes studentId and candidateId for tracking.",
+          "params": [
+            {
+              "name": "voteId",
+              "description": "Unique identifier for the vote."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/voting_results/{candidateId}",
+        "definition": {
+          "entityName": "VotingResult",
+          "schema": {
+            "$ref": "#/backend/entities/VotingResult"
+          },
+          "description": "Stores the aggregated vote counts for each candidate. Managed by the system/admin.",
+          "params": [
+            {
+              "name": "candidateId",
+              "description": "The unique identifier of the candidate for whom the results are stored."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to support the CampusVote application, emphasizing security, scalability, and ease of maintenance. It leverages structural segregation to enforce consistent security rules across collections and authorization independence by denormalizing data to avoid complex `get()` calls in security rules. \n\n*   `/admins/{adminId}`: Stores admin user data. This is a private collection accessible only to admins, storing their authentication information.\n*   `/students/{studentId}`: Stores student data.  The `studentId` becomes the document ID.  The `hasVoted` field indicates whether a student has voted, enforcing the single-vote requirement. Security rules will ensure that only authenticated students can access their own documents.\n*   `/candidates/{candidateId}`: Stores candidate information. Accessible to both students (for viewing) and admins (for management). \n*   `/votes/{voteId}`: Stores individual vote records. Each document contains the `studentId` and `candidateId`.  Security rules will ensure that only authenticated students can create vote documents, and each student can only create one.\n*   `/voting_results/{candidateId}`: Stores the aggregated vote counts for each candidate.  This collection is primarily managed by the system/admin.  The `candidateId` is also used as the document ID.\n\n**Authorization Independence:**  The `students` collection includes the `hasVoted` field. This denormalization is critical. Without it, security rules would need to read the `votes` collection to determine if a student has already voted, which breaks atomic operations.\n\n**QAPs (Rules are not Filters):**\n*   The segregation of students, admins, candidates, votes, and voting results into separate collections ensures that list operations can be secured effectively.  For example, listing candidates is open to all authenticated users, whereas listing votes is restricted. The `hasVoted` flag on student records also helps prevent filtering votes based on user status.\n\n**Invariants:**\n*   The structure facilitates enforcing invariants such as single voting by storing the `hasVoted` status directly on the student document.  Timestamps on votes are automatically generated by the server, ensuring their integrity."
+  }
+}
