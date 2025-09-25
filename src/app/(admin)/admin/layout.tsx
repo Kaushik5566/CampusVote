@@ -9,7 +9,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Menu, Users, BarChart2, LogOut } from 'lucide-react';
+import { Menu, Users, BarChart2, LogOut, MessageSquare } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -24,6 +24,7 @@ function AdminSidebarNav() {
   const navItems = [
     { href: '/admin/candidates', icon: Users, label: 'Candidates' },
     { href: '/admin/results', icon: BarChart2, label: 'Results' },
+    { href: '/admin/messages', icon: MessageSquare, label: 'Messages' },
   ];
 
   return (

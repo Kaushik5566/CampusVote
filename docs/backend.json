@@ -152,6 +152,43 @@
         "candidateId",
         "voteCount"
       ]
+    },
+     "ContactMessage": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ContactMessage",
+      "type": "object",
+      "description": "Represents a message submitted through the contact form.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the message."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the person who submitted the message."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the person who submitted the message.",
+          "format": "email"
+        },
+        "message": {
+          "type": "string",
+          "description": "The content of the message."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of when the message was sent.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "message",
+        "timestamp"
+      ]
     }
   },
   "auth": {
@@ -238,6 +275,22 @@
             {
               "name": "candidateId",
               "description": "The unique identifier of the candidate for whom the results are stored."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/contact_messages/{messageId}",
+        "definition": {
+          "entityName": "ContactMessage",
+          "schema": {
+            "$ref": "#/backend/entities/ContactMessage"
+          },
+          "description": "Stores messages submitted through the contact form. Accessible only to admins.",
+          "params": [
+            {
+              "name": "messageId",
+              "description": "Unique identifier for the contact message."
             }
           ]
         }

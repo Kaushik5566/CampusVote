@@ -25,6 +25,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Mail, Phone } from 'lucide-react';
 import { useState } from 'react';
+import { useFirebase } from '@/firebase';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { collection, serverTimestamp } from 'firebase/firestore';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -35,6 +38,7 @@ const formSchema = z.object({
 export default function ContactPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const { firestore } = useFirebase();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,16 +51,17 @@ export default function ContactPage() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    console.log(values);
-    // Simulate API call
-    setTimeout(() => {
-        toast({
-            title: 'Message Sent!',
-            description: 'Thank you for contacting us. We will get back to you shortly.',
-        });
-        form.reset();
-        setIsLoading(false);
-    }, 1500);
+    if (!firestore) return;
+
+    const messagesCollection = collection(firestore, 'contact_messages');
+    addDocumentNonBlocking(messagesCollection, { ...values, timestamp: serverTimestamp() });
+    
+    toast({
+        title: 'Message Sent!',
+        description: 'Thank you for contacting us. We will get back to you shortly.',
+    });
+    form.reset();
+    setIsLoading(false);
   }
 
   return (
