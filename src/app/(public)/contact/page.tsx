@@ -70,9 +70,9 @@ export default function ContactPage() {
               <Phone className="h-5 w-5" />
               <span>9555512182</span>
             </a>
-            <a href="mailto:contact@campusvote.com" className="flex items-center gap-2 hover:text-primary transition-colors">
+            <a href="mailto:kaushikmaurya8355@gmail.com" className="flex items-center gap-2 hover:text-primary transition-colors">
               <Mail className="h-5 w-5" />
-              <span>contact@campusvote.com</span>
+              <span>kaushikmaurya8355@gmail.com</span>
             </a>
           </div>
         </CardHeader>
