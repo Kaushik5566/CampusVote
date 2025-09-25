@@ -4,7 +4,7 @@ import { Logo } from '@/components/logo';
 
 export default function HomePage() {
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-background">
+    <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-background to-accent/50">
       <main className="flex flex-col items-center justify-center p-8 text-center">
         <Logo className="mb-6 h-24 w-24 text-primary" />
         <h1 className="font-headline text-5xl font-bold text-primary md:text-6xl">
