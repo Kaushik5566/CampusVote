@@ -8,7 +8,7 @@ export default function HomePage() {
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://images.unsplash.com/photo-1627556704353-02685818342a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2xsZWdlJTIwY2FtcHVzfGVufDB8fHx8MTc1ODc3OTU4MHww&ixlib=rb-4.1.0&q=80&w=1080"
+          src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHdhbGtpbmclMjBvbiUyMGNhbXB1c3xlbnwwfHx8fDE3NTg3ODA0NTV8MA&ixlib=rb-4.1.0&q=80&w=1080"
           alt="Students walking on campus"
           fill
           className="object-cover"
