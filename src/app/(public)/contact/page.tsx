@@ -23,7 +23,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Mail, Phone } from 'lucide-react';
 import { useState } from 'react';
 
 const formSchema = z.object({
@@ -65,6 +65,16 @@ export default function ContactPage() {
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl">Contact Us</CardTitle>
           <CardDescription>Have a question or feedback? Drop us a line!</CardDescription>
+           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 pt-4 text-muted-foreground">
+            <a href="tel:9555512182" className="flex items-center gap-2 hover:text-primary transition-colors">
+              <Phone className="h-5 w-5" />
+              <span>9555512182</span>
+            </a>
+            <a href="mailto:contact@campusvote.com" className="flex items-center gap-2 hover:text-primary transition-colors">
+              <Mail className="h-5 w-5" />
+              <span>contact@campusvote.com</span>
+            </a>
+          </div>
         </CardHeader>
         <CardContent>
           <Form {...form}>
