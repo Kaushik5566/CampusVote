@@ -15,30 +15,30 @@ import { Logo } from '@/components/logo';
 import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  password: z.string().min(1, { message: 'Password is required.' }),
+  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
+  username: z.string().min(3, { message: 'Username must be at least 3 characters.' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
 
-export default function StudentLoginPage() {
-  const { login } = useAuth();
+export default function AdminRegisterPage() {
+  const { register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
+      name: '',
+      username: '',
       password: '',
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    setTimeout(() => {
-      const success = login(values.email, values.password);
-      if (!success) {
-        setIsLoading(false);
-      }
-    }, 1000);
+    const success = register({id: values.username, name: values.name}, 'admin');
+    if (!success) {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -48,20 +48,33 @@ export default function StudentLoginPage() {
           <div className="mx-auto mb-4">
             <Logo className="h-16 w-16 text-primary" />
           </div>
-          <CardTitle className="font-headline text-3xl">Student Portal</CardTitle>
-          <CardDescription>Sign in to cast your vote</CardDescription>
+          <CardTitle className="font-headline text-3xl">Admin Registration</CardTitle>
+          <CardDescription>Create an administrator account</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
-                name="email"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>College Email</FormLabel>
+                    <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="student@college.edu" {...field} />
+                      <Input placeholder="Admin User" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder="admin" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -82,20 +95,14 @@ export default function StudentLoginPage() {
               />
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Sign In
+                Register
               </Button>
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
-            Don't have an account?{' '}
-            <Link href="/register" className="underline text-primary">
-              Register
-            </Link>
-          </div>
-          <div className="mt-2 text-center text-sm">
-            Are you an admin?{' '}
+            Already have an account?{' '}
             <Link href="/admin/login" className="underline text-primary">
-              Admin Login
+              Sign In
             </Link>
           </div>
         </CardContent>

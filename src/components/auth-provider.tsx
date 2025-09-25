@@ -3,13 +3,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { mockUsers, mockAdmins, mockCandidates } from '@/lib/data';
-import type { User, Admin, Candidate } from '@/lib/types';
+import type { User, Admin, Candidate, AuthUser } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
 type AuthContextType = {
   user: User | Admin | null;
   login: (id: string, pass: string) => boolean;
   logout: () => void;
+  register: (user: AuthUser, type: 'student' | 'admin') => boolean;
   candidates: Candidate[];
   submitVote: (votes: Record<string, string>) => void;
   addCandidate: (candidate: Omit<Candidate, 'id' | 'votes' | 'imageUrl'> & { imageUrl?: string }) => void;
@@ -26,6 +27,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [candidates, setCandidates] = useState<Candidate[]>(mockCandidates);
   const [resultsPublished, setResultsPublished] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [admins, setAdmins] = useState<Admin[]>(mockAdmins);
   const router = useRouter();
   const pathname = usePathname();
   const { toast } = useToast();
@@ -35,6 +38,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const storedUser = sessionStorage.getItem('user');
       const storedCandidates = sessionStorage.getItem('candidates');
       const storedResults = sessionStorage.getItem('resultsPublished');
+      const storedUsers = sessionStorage.getItem('users');
+      const storedAdmins = sessionStorage.getItem('admins');
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
@@ -44,6 +49,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (storedResults) {
         setResultsPublished(JSON.parse(storedResults));
       }
+      if (storedUsers) {
+        setUsers(JSON.parse(storedUsers));
+      }
+      if (storedAdmins) {
+        setAdmins(JSON.parse(storedAdmins));
+      }
+
     } catch (error) {
       console.error("Failed to parse from sessionStorage", error);
       sessionStorage.clear();
@@ -70,26 +82,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     sessionStorage.setItem('resultsPublished', JSON.stringify(resultsPublished));
   }, [resultsPublished, loading]);
 
+  useEffect(() => {
+    if (loading) return;
+    sessionStorage.setItem('users', JSON.stringify(users));
+  }, [users, loading]);
+
+    useEffect(() => {
+    if (loading) return;
+    sessionStorage.setItem('admins', JSON.stringify(admins));
+    }, [admins, loading]);
+
 
   const login = (id: string, pass: string): boolean => {
-    // In a real app, this would be a secure API call
-    if (pass !== 'password') { // Universal password for mock
-        toast({
-            title: 'Login Failed',
-            description: 'Invalid credentials. Please try again.',
-            variant: 'destructive',
-        });
-        return false;
-    }
-
-    const student = mockUsers.find(u => u.id === id);
+    const student = users.find(u => u.id === id);
     if (student) {
       setUser(student);
       router.push('/dashboard');
       return true;
     }
 
-    const admin = mockAdmins.find(a => a.id === id);
+    const admin = admins.find(a => a.id === id);
     if (admin) {
       setUser(admin);
       router.push('/admin/candidates');
@@ -104,13 +116,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return false;
   };
 
+  const register = (newUser: AuthUser, type: 'student' | 'admin'): boolean => {
+    if(type === 'student'){
+      if (users.find(u => u.id === newUser.id)) {
+        toast({
+          title: 'Registration Failed',
+          description: 'A student with this email already exists.',
+          variant: 'destructive',
+        });
+        return false;
+      }
+      const newStudent: User = { ...newUser, type: 'student', hasVoted: false };
+      setUsers(prev => [...prev, newStudent]);
+      setUser(newStudent);
+      router.push('/dashboard');
+    } else {
+      if (admins.find(a => a.id === newUser.id)) {
+        toast({
+          title: 'Registration Failed',
+          description: 'An admin with this username already exists.',
+          variant: 'destructive',
+        });
+        return false;
+      }
+      const newAdmin: Admin = { ...newUser, type: 'admin' };
+      setAdmins(prev => [...prev, newAdmin]);
+      setUser(newAdmin);
+      router.push('/admin/candidates');
+    }
+
+    toast({
+      title: 'Registration Successful',
+      description: `Welcome, ${newUser.name}!`,
+    });
+    return true;
+  };
+
   const logout = () => {
     const userType = user?.type;
     setUser(null);
-    sessionStorage.clear();
-    // Reset data for demo purposes on logout
-    setCandidates(mockCandidates);
-    setResultsPublished(false);
+    // Don't clear all session storage, to persist users
+    sessionStorage.removeItem('user');
     
     if (userType === 'admin') {
       router.push('/admin/login');
@@ -133,7 +179,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return newCandidates;
     });
 
-    setUser(prev => prev ? { ...prev, hasVoted: true } as User : null);
+    const updatedUser = { ...user, hasVoted: true };
+    setUser(updatedUser as User);
+    setUsers(prev => prev.map(u => u.id === updatedUser.id ? (updatedUser as User) : u));
+
 
     toast({
       title: 'Vote Submitted!',
@@ -161,7 +210,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished }}>
+    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished }}>
       {!loading && children}
     </AuthContext.Provider>
   );

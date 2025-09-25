@@ -87,6 +87,12 @@ export default function AdminLoginPage() {
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
+            Don't have an account?{' '}
+            <Link href="/admin/register" className="underline text-primary">
+              Register
+            </Link>
+          </div>
+          <div className="mt-2 text-center text-sm">
             Not an admin?{' '}
             <Link href="/login" className="underline text-primary">
               Student Login

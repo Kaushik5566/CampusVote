@@ -21,3 +21,8 @@ export type Admin = {
   name: string;
   type: 'admin';
 };
+
+export type AuthUser = {
+    id: string;
+    name: string;
+}
