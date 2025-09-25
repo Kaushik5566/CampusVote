@@ -1,18 +1,18 @@
 import type { Metadata } from 'next';
-import { Poppins, Open_Sans } from 'next/font/google';
+import { Lexend, Inter } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/components/auth-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { FirebaseClientProvider } from '@/firebase';
 
-const fontHeadline = Poppins({ 
+const fontHeadline = Lexend({ 
   subsets: ['latin'], 
   weight: ['600', '700', '800'],
   variable: '--font-headline' 
 });
 
-const fontBody = Open_Sans({ 
+const fontBody = Inter({ 
   subsets: ['latin'], 
   variable: '--font-body' 
 });

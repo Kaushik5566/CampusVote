@@ -15,7 +15,7 @@ interface CandidateCardProps {
 
 export function CandidateCard({ candidate }: CandidateCardProps) {
   return (
-    <Card className="flex flex-col overflow-hidden transition-shadow hover:shadow-lg">
+    <Card className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 has-[:checked]:ring-2 has-[:checked]:ring-primary has-[:checked]:shadow-2xl">
       <CardHeader className="flex flex-row items-center gap-4 p-4">
         <RadioGroupItem value={candidate.id} id={candidate.id} className="h-6 w-6" />
         <div className="relative h-20 w-20 flex-shrink-0">

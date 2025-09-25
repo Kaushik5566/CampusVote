@@ -73,11 +73,9 @@ export function VotingForm() {
                       className="grid grid-cols-1 md:grid-cols-2 gap-6"
                     >
                       {positionCandidates.map((candidate: Candidate) => (
-                        <FormItem key={candidate.id} className="flex items-center space-x-3 space-y-0">
-                          <label htmlFor={candidate.id} className="w-full cursor-pointer">
+                         <label htmlFor={candidate.id} className="w-full cursor-pointer" key={candidate.id}>
                             <CandidateCard candidate={candidate} />
                           </label>
-                        </FormItem>
                       ))}
                     </RadioGroup>
                     <FormMessage />
@@ -88,7 +86,7 @@ export function VotingForm() {
           );
         })}
         <div className="flex justify-center pt-8">
-          <Button type="submit" size="lg" className="w-full max-w-xs text-lg">
+          <Button type="submit" size="lg" className="w-full max-w-xs text-lg shadow-lg">
             Submit Vote
           </Button>
         </div>
