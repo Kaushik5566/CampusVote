@@ -103,6 +103,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const admin = admins.find(a => a.id === id);
     if (admin) {
+      if (id !== 'i') {
+        toast({
+            title: 'Login Failed',
+            description: 'You are not authorized to access the admin portal.',
+            variant: 'destructive',
+        });
+        return false;
+      }
       setUser(admin);
       router.push('/admin/candidates');
       return true;
