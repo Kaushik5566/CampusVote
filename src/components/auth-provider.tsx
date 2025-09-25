@@ -104,7 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const admin = admins.find(a => a.id === id);
     if (admin) {
-      if (id === 'Kaushik' && pass === 'Kaushik@2004') {
+      if (admin.password === pass) {
          setUser(admin);
          router.push('/admin/candidates');
          return true;

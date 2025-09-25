@@ -20,6 +20,7 @@ export type Admin = {
   id: string; // username
   name: string;
   type: 'admin';
+  password?: string;
 };
 
 export type AuthUser = {
