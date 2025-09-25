@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -8,10 +9,12 @@ export default function HomePage() {
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzdHVkZW50cyUyMHdhbGtpbmclMjBvbiUyMGNhbXB1c3xlbnwwfHx8fDE3NTg4MDM4Njh8MA&ixlib=rb-4.1.0&q=80&w=1080"
+          src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzdHVkZW50cyUyMHdhbGtpbmclMjBvbiUyMGNhbXB1c3xlbnwwfHx8fDE3NTg4MDM4Njh8MA&ixlib=rb-4.1.0&q=80&w=1920"
           alt="Students walking on campus"
-          fill
-          className="object-cover"
+          width={1920}
+          height={1080}
+          priority
+          className="object-cover w-full h-full"
           data-ai-hint="college campus"
           unoptimized
         />
