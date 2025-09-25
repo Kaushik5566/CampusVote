@@ -108,29 +108,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
          setUser(admin);
          router.push('/admin/candidates');
          return true;
-      }
-       toast({
+      } else {
+        toast({
             title: 'Login Failed',
             description: 'Invalid credentials for admin.',
             variant: 'destructive',
         });
         return false;
+      }
     }
     
-    // Check if the username exists in admins to give a more specific error
-    if (admins.find(a => a.id === id)) {
-      toast({
+    toast({
         title: 'Login Failed',
-        description: 'Invalid credentials for admin.',
+        description: 'User not found.',
         variant: 'destructive',
-      });
-    } else {
-       toast({
-          title: 'Login Failed',
-          description: 'User not found.',
-          variant: 'destructive',
-      });
-    }
+    });
     return false;
   };
 
