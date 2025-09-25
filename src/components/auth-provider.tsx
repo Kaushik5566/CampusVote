@@ -117,11 +117,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return false;
     }
     
-    toast({
+    // Check if the username exists in admins to give a more specific error
+    if (admins.find(a => a.id === id)) {
+      toast({
         title: 'Login Failed',
-        description: 'User not found.',
+        description: 'Invalid credentials for admin.',
         variant: 'destructive',
-    });
+      });
+    } else {
+       toast({
+          title: 'Login Failed',
+          description: 'User not found.',
+          variant: 'destructive',
+      });
+    }
     return false;
   };
 
@@ -139,19 +148,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUsers(prev => [...prev, newStudent]);
       setUser(newStudent);
       router.push('/dashboard');
-    } else {
-      if (admins.find(a => a.id === newUser.id)) {
-        toast({
-          title: 'Registration Failed',
-          description: 'An admin with this username already exists.',
-          variant: 'destructive',
-        });
-        return false;
-      }
-      const newAdmin: Admin = { ...newUser, type: 'admin' };
-      setAdmins(prev => [...prev, newAdmin]);
-      setUser(newAdmin);
-      router.push('/admin/candidates');
     }
 
     toast({
