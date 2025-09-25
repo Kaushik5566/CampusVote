@@ -96,6 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = (id: string, pass: string): boolean => {
     const student = users.find(u => u.id === id);
     if (student) {
+      // For mock purposes, any password is fine for students for now
       setUser(student);
       router.push('/dashboard');
       return true;
@@ -103,17 +104,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const admin = admins.find(a => a.id === id);
     if (admin) {
-      if (id !== 'i') {
-        toast({
+      if (id === 'Kaushik' && pass === 'Kaushik@2004') {
+         setUser(admin);
+         router.push('/admin/candidates');
+         return true;
+      }
+       toast({
             title: 'Login Failed',
-            description: 'You are not authorized to access the admin portal.',
+            description: 'Invalid credentials for admin.',
             variant: 'destructive',
         });
         return false;
-      }
-      setUser(admin);
-      router.push('/admin/candidates');
-      return true;
     }
     
     toast({

@@ -7,8 +7,7 @@ export const mockUsers: User[] = [
 ];
 
 export const mockAdmins: Admin[] = [
-    { id: 'admin', name: 'Admin User', type: 'admin' },
-    { id: 'i', name: 'Super Admin', type: 'admin' },
+    { id: 'Kaushik', name: 'Kaushik', type: 'admin' },
 ];
 
 const getImage = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageUrl || '';
