@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Footer } from '@/components/footer';
 
 
 function AdminSidebarNav() {
@@ -110,6 +111,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background">
           {children}
         </main>
+        <Footer />
       </div>
     </div>
   );
