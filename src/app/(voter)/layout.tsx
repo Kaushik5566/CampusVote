@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth-provider';
-import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 
 export default function VoterLayout({
@@ -30,7 +29,6 @@ export default function VoterLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
       <main className="flex-1">{children}</main>
       <Footer />
     </div>

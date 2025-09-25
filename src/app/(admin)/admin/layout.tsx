@@ -9,12 +9,11 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Menu, User, Users, BarChart2, LogOut } from 'lucide-react';
+import { Menu, Users, BarChart2, LogOut } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Footer } from '@/components/footer';
 
 
@@ -64,7 +63,7 @@ function AdminSidebarNav() {
 
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -83,13 +82,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <AdminSidebarNav />
       </div>
       <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-16 lg:px-6">
+         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-16 lg:px-6 md:hidden">
            <Sheet>
             <SheetTrigger asChild>
               <Button
                 variant="outline"
                 size="icon"
-                className="shrink-0 md:hidden"
+                className="shrink-0"
               >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle navigation menu</span>
@@ -99,14 +98,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <AdminSidebarNav />
             </SheetContent>
           </Sheet>
-          <div className="w-full flex-1">
-            {/* Can add search or other header elements here */}
-          </div>
-          <Avatar>
-            <AvatarFallback>
-                <User/>
-            </AvatarFallback>
-          </Avatar>
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background">
           {children}
