@@ -109,6 +109,11 @@ export default function StudentLoginPage() {
                   </FormItem>
                 )}
               />
+              {loginError && (
+                <div className="text-sm font-medium text-destructive">
+                    Invalid credentials or user not found.
+                </div>
+              )}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Sign In
