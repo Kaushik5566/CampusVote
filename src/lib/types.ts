@@ -1,11 +1,9 @@
 
 
-export type CandidatePosition = 'President' | 'Vice-President' | 'Secretary';
-
 export type Candidate = {
   id: string;
   name: string;
-  position: CandidatePosition;
+  position: string;
   manifesto: string;
   imageUrl: string;
   votes: number;

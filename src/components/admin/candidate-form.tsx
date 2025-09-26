@@ -23,16 +23,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useAuth } from '../auth-provider';
-import type { Candidate, CandidatePosition } from '@/lib/types';
-import { positions } from '@/lib/data';
+import type { Candidate } from '@/lib/types';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Wand2, Loader2 } from 'lucide-react';
@@ -40,8 +32,9 @@ import { generateCandidateManifesto } from '@/ai/flows/generate-candidate-manife
 
 const formSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters.'),
-  position: z.enum(positions, { required_error: 'Position is required.' }),
+  position: z.string().min(3, { message: 'Position must be at least 3 characters.' }),
   manifesto: z.string().min(10, 'Manifesto must be at least 10 characters.'),
+  imageUrl: z.string().url({ message: 'Please enter a valid URL.' }),
 });
 
 type CandidateFormProps = {
@@ -59,8 +52,9 @@ export function CandidateForm({ candidate, children }: CandidateFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: candidate?.name || '',
-      position: candidate?.position,
+      position: candidate?.position || '',
       manifesto: candidate?.manifesto || '',
+      imageUrl: candidate?.imageUrl || '',
     },
   });
 
@@ -130,20 +124,22 @@ export function CandidateForm({ candidate, children }: CandidateFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Position</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a position" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {positions.map((pos) => (
-                        <SelectItem key={pos} value={pos}>
-                          {pos}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <Input placeholder="e.g. President" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="imageUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image URL</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://example.com/image.png" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
