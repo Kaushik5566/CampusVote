@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -9,7 +10,6 @@ import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { RadioGroup } from '@/components/ui/radio-group';
 import { useAuth } from '@/components/auth-provider';
 import { CandidateCard } from './candidate-card';
-import { positions } from '@/lib/data';
 import type { Candidate } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { CheckCircle, Clock, Lock } from 'lucide-react';
@@ -18,6 +18,8 @@ import { format } from 'date-fns';
 
 export function VotingForm() {
   const { candidates, submitVote, user, votingStartDate, votingEndDate } = useAuth();
+  
+  const positions = [...new Set(candidates.map(c => c.position))];
 
   const schemaObject = positions.reduce((acc, position) => {
     acc[position] = z.string({ required_error: `You must select a candidate for ${position}.` });
