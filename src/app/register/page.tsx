@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -163,7 +163,7 @@ export default function StudentRegisterPage() {
                         placeholder="DD/MM/YYYY"
                         value={field.value ? format(field.value, 'dd/MM/yyyy') : ''}
                         onChange={(e) => {
-                          const date = new Date(e.target.value);
+                          const date = parse(e.target.value, 'dd/MM/yyyy', new Date());
                           if (!isNaN(date.getTime())) {
                             field.onChange(date);
                           }

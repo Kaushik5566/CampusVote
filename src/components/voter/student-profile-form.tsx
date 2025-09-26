@@ -36,7 +36,7 @@ import { courses, years } from '@/lib/data';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
 
@@ -125,10 +125,10 @@ export function StudentProfileForm({ student, children }: StudentProfileFormProp
                         placeholder="DD/MM/YYYY"
                         value={field.value ? format(field.value, 'dd/MM/yyyy') : ''}
                         onChange={(e) => {
-                          const date = new Date(e.target.value);
-                          if (!isNaN(date.getTime())) {
-                            field.onChange(date);
-                          }
+                            const date = parse(e.target.value, 'dd/MM/yyyy', new Date());
+                            if (!isNaN(date.getTime())) {
+                              field.onChange(date);
+                            }
                         }}
                         className="pr-10"
                       />
