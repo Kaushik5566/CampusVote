@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import Image from 'next/image';
+import { UserSearch } from 'lucide-react';
 
 export default function PublicCandidatesPage() {
   const { candidates } = useAuth();
@@ -33,33 +34,45 @@ export default function PublicCandidatesPage() {
         </div>
       </div>
       <div className="container mx-auto max-w-6xl py-12 px-4">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {candidates.map((candidate) => (
-            <Card key={candidate.id} className="overflow-hidden shadow-lg transition-shadow hover:shadow-xl">
-              <div className="relative h-56 w-full">
-                <Image
-                  src={candidate.imageUrl}
-                  alt={`Photo of ${candidate.name}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  data-ai-hint="person portrait"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle className="font-headline text-2xl text-primary">
-                  {candidate.name}
-                </CardTitle>
-                <CardDescription className="font-medium">{candidate.position}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground line-clamp-4">
-                    {candidate.manifesto}
-                </p>
-              </CardContent>
+        {candidates.length > 0 ? (
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {candidates.map((candidate) => (
+                <Card key={candidate.id} className="overflow-hidden shadow-lg transition-shadow hover:shadow-xl">
+                <div className="relative h-56 w-full">
+                    <Image
+                    src={candidate.imageUrl}
+                    alt={`Photo of ${candidate.name}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    data-ai-hint="person portrait"
+                    />
+                </div>
+                <CardHeader>
+                    <CardTitle className="font-headline text-2xl text-primary">
+                    {candidate.name}
+                    </CardTitle>
+                    <CardDescription className="font-medium">{candidate.position}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground line-clamp-4">
+                        {candidate.manifesto}
+                    </p>
+                </CardContent>
+                </Card>
+            ))}
+            </div>
+        ) : (
+            <Card className="w-full max-w-2xl mx-auto my-12 text-center">
+                <CardHeader>
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                        <UserSearch className="h-10 w-10 text-muted-foreground" />
+                    </div>
+                    <CardTitle className="mt-4 text-2xl font-bold">No Candidates Yet</CardTitle>
+                    <CardDescription>Candidates for the upcoming election have not been announced. Please check back soon!</CardDescription>
+                </CardHeader>
             </Card>
-          ))}
-        </div>
+        )}
       </div>
     </>
   );

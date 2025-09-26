@@ -5,7 +5,7 @@ import { useAuth } from '@/components/auth-provider';
 import { ResultsChart } from '@/components/results/results-chart';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Lock, Trophy } from 'lucide-react';
+import { Lock, Trophy, UserSearch } from 'lucide-react';
 import { positions } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { WinnersDisplay } from '@/components/results/winners-display';
@@ -28,6 +28,22 @@ export default function ResultsPage() {
             </CardHeader>
         </Card>
       </div>
+    );
+  }
+
+  if (candidates.length === 0) {
+    return (
+        <div className="container mx-auto max-w-5xl py-12 px-4">
+            <Card className="w-full max-w-2xl mx-auto my-12 text-center">
+                <CardHeader>
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                        <UserSearch className="h-10 w-10 text-muted-foreground" />
+                    </div>
+                    <CardTitle className="mt-4 text-2xl font-bold">No Candidates Found</CardTitle>
+                    <CardDescription>Results cannot be displayed because there were no candidates in this election.</CardDescription>
+                </CardHeader>
+            </Card>
+        </div>
     );
   }
   

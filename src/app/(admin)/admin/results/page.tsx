@@ -10,11 +10,28 @@ import { VotingPeriodSettings } from '@/components/admin/voting-period-settings'
 import { ArchiveElection } from '@/components/admin/archive-election';
 import { positions } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
-import { Trophy } from 'lucide-react';
+import { Trophy, UserSearch } from 'lucide-react';
 import { WinnersDisplay } from '@/components/results/winners-display';
 
 export default function AdminResultsPage() {
   const { candidates } = useAuth();
+
+  if (candidates.length === 0) {
+    return (
+        <div className="lg:col-span-7">
+            <Card className="w-full text-center">
+                <CardHeader>
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                        <UserSearch className="h-10 w-10 text-muted-foreground" />
+                    </div>
+                    <CardTitle className="mt-4 text-2xl font-bold">No Candidates Found</CardTitle>
+                    <CardDescription>Results cannot be displayed because there are no candidates in the election.</CardDescription>
+                </CardHeader>
+            </Card>
+        </div>
+    );
+  }
+
   const sortedCandidates = [...candidates].sort((a, b) => {
     if (a.position < b.position) return -1;
     if (a.position > b.position) return 1;

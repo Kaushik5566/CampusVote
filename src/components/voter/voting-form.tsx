@@ -12,7 +12,7 @@ import { useAuth } from '@/components/auth-provider';
 import { CandidateCard } from './candidate-card';
 import type { Candidate } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { CheckCircle, Clock, Lock } from 'lucide-react';
+import { CheckCircle, Clock, Lock, UserSearch } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 
@@ -90,6 +90,22 @@ export function VotingForm() {
                 <Link href="/results">View Live Results</Link>
             </Button>
         </CardContent>
+      </Card>
+    );
+  }
+
+  if (candidates.length === 0) {
+    return (
+      <Card className="w-full max-w-2xl mx-auto my-12 text-center">
+        <CardHeader>
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+            <UserSearch className="h-10 w-10 text-muted-foreground" />
+          </div>
+          <CardTitle className="mt-4 text-2xl font-bold">Ballot Not Available</CardTitle>
+          <CardDescription>
+            There are no candidates registered for this election yet. Please check back later.
+          </CardDescription>
+        </CardHeader>
       </Card>
     );
   }
