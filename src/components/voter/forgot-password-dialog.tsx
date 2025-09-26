@@ -63,18 +63,20 @@ export function ForgotPasswordDialog({ children }: { children: React.ReactNode }
 
   const handleEmailSubmit = (values: z.infer<typeof emailSchema>) => {
     setIsLoading(true);
-    const foundStudent = findStudentByEmail(values.email);
-    if (foundStudent) {
-      setStudent(foundStudent);
-      setStep('question');
-    } else {
-      toast({
-        title: 'Error',
-        description: 'No student found with that email address.',
-        variant: 'destructive',
-      });
-    }
-    setIsLoading(false);
+    setTimeout(() => {
+        const foundStudent = findStudentByEmail(values.email);
+        if (foundStudent) {
+            setStudent(foundStudent);
+            setStep('question');
+        } else {
+            toast({
+                title: 'Error',
+                description: 'No student found with that email address.',
+                variant: 'destructive',
+            });
+        }
+        setIsLoading(false);
+    }, 500);
   };
 
   const handleAnswerSubmit = (values: z.infer<typeof answerSchema>) => {
