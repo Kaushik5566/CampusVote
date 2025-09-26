@@ -15,6 +15,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { CheckCircle, Clock, Lock, UserSearch } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 export function VotingForm() {
   const { candidates, submitVote, user, votingStartDate, votingEndDate } = useAuth();
@@ -39,6 +40,7 @@ export function VotingForm() {
   const now = new Date();
   const hasVotingStarted = now >= votingStartDate;
   const hasVotingEnded = now > votingEndDate;
+  const isVotingDisabled = !hasVotingStarted || hasVotingEnded || user?.hasVoted;
 
   if (hasVotingEnded) {
     return (
@@ -59,22 +61,6 @@ export function VotingForm() {
     );
   }
   
-  if (!hasVotingStarted) {
-    return (
-        <Card className="w-full max-w-2xl mx-auto my-12 text-center">
-            <CardHeader>
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                    <Clock className="h-10 w-10 text-muted-foreground" />
-                </div>
-                <CardTitle className="mt-4 text-2xl font-bold">Voting Has Not Started Yet</CardTitle>
-                <CardDescription>
-                    The voting period will open on <span className="font-semibold">{format(votingStartDate, "MMMM d, yyyy 'at' h:mm a")}</span>.
-                </CardDescription>
-            </CardHeader>
-        </Card>
-    );
-  }
-
   if (user?.type === 'student' && user.hasVoted) {
     return (
       <Card className="w-full max-w-2xl mx-auto my-12 text-center">
@@ -111,44 +97,56 @@ export function VotingForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
-        {positions.map((position) => {
-          const positionCandidates = candidates.filter(c => c.position === position);
-          return (
-            <div key={position}>
-              <h2 className="font-headline text-3xl font-bold mb-6 border-b-2 border-primary pb-2">
-                {position}
-              </h2>
-              <FormField
-                control={form.control}
-                name={position}
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                    >
-                      {positionCandidates.map((candidate: Candidate) => (
-                         <label htmlFor={candidate.id} className="w-full cursor-pointer" key={candidate.id}>
-                            <CandidateCard candidate={candidate} />
-                          </label>
-                      ))}
-                    </RadioGroup>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          );
-        })}
-        <div className="flex justify-center pt-8">
-          <Button type="submit" size="lg" className="w-full max-w-xs text-lg shadow-lg">
-            Submit Vote
-          </Button>
-        </div>
-      </form>
-    </Form>
+    <>
+      {!hasVotingStarted && (
+        <Alert className="mb-8 max-w-2xl mx-auto border-primary/50 text-primary">
+            <Clock className="h-4 w-4" />
+            <AlertTitle>Voting Has Not Started Yet</AlertTitle>
+            <AlertDescription>
+                The voting period will open on <span className="font-semibold">{format(votingStartDate, "MMMM d, yyyy 'at' h:mm a")}</span>. You can review the candidates below.
+            </AlertDescription>
+        </Alert>
+      )}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
+          {positions.map((position) => {
+            const positionCandidates = candidates.filter(c => c.position === position);
+            return (
+              <div key={position}>
+                <h2 className="font-headline text-3xl font-bold mb-6 border-b-2 border-primary pb-2">
+                  {position}
+                </h2>
+                <FormField
+                  control={form.control}
+                  name={position}
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                        disabled={isVotingDisabled}
+                      >
+                        {positionCandidates.map((candidate: Candidate) => (
+                           <label htmlFor={candidate.id} className={cn("w-full", isVotingDisabled ? "cursor-not-allowed" : "cursor-pointer")} key={candidate.id}>
+                              <CandidateCard candidate={candidate} disabled={isVotingDisabled} />
+                            </label>
+                        ))}
+                      </RadioGroup>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            );
+          })}
+          <div className="flex justify-center pt-8">
+            <Button type="submit" size="lg" className="w-full max-w-xs text-lg shadow-lg" disabled={isVotingDisabled}>
+              Submit Vote
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </>
   );
 }
