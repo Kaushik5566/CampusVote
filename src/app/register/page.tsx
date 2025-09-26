@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/components/auth-provider';
 import { Logo } from '@/components/logo';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { courses, years } from '@/lib/data';
+import { courses, years, semesters } from '@/lib/data';
 import type { User } from '@/lib/types';
 
 const formSchema = z.object({
@@ -23,6 +23,7 @@ const formSchema = z.object({
   collegeName: z.string().min(2, { message: 'College name must be at least 2 characters.' }),
   course: z.string({ required_error: 'Please select a course.' }),
   year: z.enum(years).optional(),
+  semester: z.enum(semesters).optional(),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
@@ -45,7 +46,7 @@ export default function StudentRegisterPage() {
   });
 
   const selectedCourse = form.watch('course');
-  const showYearField = coursesWithYears.includes(selectedCourse);
+  const showYearAndSemesterField = coursesWithYears.includes(selectedCourse);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -55,6 +56,7 @@ export default function StudentRegisterPage() {
         collegeName: values.collegeName,
         course: values.course,
         year: values.year,
+        semester: values.semester,
     }, 'student');
     if (!success) {
       setIsLoading(false);
@@ -100,8 +102,7 @@ export default function StudentRegisterPage() {
                   </FormItem>
                 )}
               />
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <FormField
+              <FormField
                   control={form.control}
                   name="course"
                   render={({ field }) => (
@@ -125,7 +126,8 @@ export default function StudentRegisterPage() {
                     </FormItem>
                   )}
                 />
-                {showYearField && (
+              {showYearAndSemesterField && (
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <FormField
                     control={form.control}
                     name="year"
@@ -136,7 +138,7 @@ export default function StudentRegisterPage() {
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select year" />
-                            </SelectTrigger>
+                            </Trigger>
                           </FormControl>
                           <SelectContent>
                             {years.map((year) => (
@@ -150,8 +152,32 @@ export default function StudentRegisterPage() {
                       </FormItem>
                     )}
                   />
-                )}
-              </div>
+                  <FormField
+                    control={form.control}
+                    name="semester"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Semester</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select sem" />
+                            </Trigger>
+                          </FormControl>
+                          <SelectContent>
+                            {semesters.map((sem) => (
+                              <SelectItem key={sem} value={sem}>
+                                {sem}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
               <FormField
                 control={form.control}
                 name="email"

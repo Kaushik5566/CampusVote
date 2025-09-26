@@ -3,8 +3,8 @@ import type { User, Admin, Candidate, CandidatePosition } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
 export const mockUsers: User[] = [
-  { id: 'student1@college.edu', name: 'John Doe', collegeName: 'State University', course: 'BSC-IT', year: 'SY', type: 'student', hasVoted: false },
-  { id: 'student2@college.edu', name: 'Jane Smith', collegeName: 'City College', course: 'BCOM', year: 'TY', type: 'student', hasVoted: true },
+  { id: 'student1@college.edu', name: 'John Doe', collegeName: 'State University', course: 'BSC-IT', year: 'SY', semester: '4', type: 'student', hasVoted: false },
+  { id: 'student2@college.edu', name: 'Jane Smith', collegeName: 'City College', course: 'BCOM', year: 'TY', semester: '6', type: 'student', hasVoted: true },
 ];
 
 export const mockAdmins: Admin[] = [
@@ -59,7 +59,7 @@ export const mockCandidates: Candidate[] = [
     id: '6',
     name: 'Fiona Garcia',
     position: 'Secretary',
-    manifesto: 'I will bring efficiency and clarity to the student council. My goal is to streamline processes, manage records effectively, and be a reliable point of contact for all student inquiries.',
+    manifesto: 'I will bring efficiency and clarity to the student council. My goal is to streamline processes, manage records effectively, and be a reliable point of contact for all all student inquiries.',
     imageUrl: getImage('candidate-6'),
     votes: 130,
   },
@@ -70,3 +70,5 @@ export const positions: CandidatePosition[] = ['President', 'Vice-President', 'S
 export const courses: string[] = ['FYJC', 'SYJC', 'BSC-IT', 'BSC-DS', 'BBI', 'BAF', 'BCOM', 'BMS'];
 
 export const years: ('FY' | 'SY' | 'TY')[] = ['FY', 'SY', 'TY'];
+
+export const semesters: ('1' | '2' | '3' | '4' | '5' | '6')[] = ['1', '2', '3', '4', '5', '6'];

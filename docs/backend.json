@@ -40,6 +40,10 @@
           "type": "string",
           "description": "The year the student is currently in (e.g., FY, SY, TY), if applicable."
         },
+        "semester": {
+          "type": "string",
+          "description": "The semester the student is currently in (e.g., 1, 2, 3), if applicable."
+        },
         "hasVoted": {
           "type": "boolean",
           "description": "Indicates whether the student has already voted."
