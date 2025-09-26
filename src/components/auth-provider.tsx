@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 
 type AuthContextType = {
   user: User | Admin | null;
-  login: (id: string, pass: string) => boolean;
+  login: (id: string, pass: string, userType: 'student' | 'admin') => boolean;
   logout: () => void;
   register: (user: AuthUser, type: 'student' | 'admin') => boolean;
   candidates: Candidate[];
@@ -148,34 +148,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [electionHistory, loading]);
 
 
-  const login = (id: string, pass: string): boolean => {
-    const student = users.find(u => u.id === id);
-    if (student) {
-      // For mock purposes, any password is fine for students for now
-      setUser(student);
-      router.push('/dashboard');
-      return true;
+  const login = (id: string, pass: string, userType: 'student' | 'admin'): boolean => {
+    if (userType === 'student') {
+        const student = users.find(u => u.id === id);
+        if (student) {
+            // For mock purposes, any password is fine for students for now
+            setUser(student);
+            router.push('/dashboard');
+            return true;
+        }
+    } else if (userType === 'admin') {
+        const admin = admins.find(a => a.id === id);
+        if (admin) {
+            if (admin.password === pass) {
+                setUser(admin);
+                router.push('/admin/dashboard');
+                return true;
+            }
+        }
     }
 
-    const admin = admins.find(a => a.id === id);
-    if (admin) {
-      if (admin.password === pass) {
-         setUser(admin);
-         router.push('/admin/dashboard');
-         return true;
-      } else {
-        toast({
-            title: 'Login Failed',
-            description: 'Invalid credentials for admin.',
-            variant: 'destructive',
-        });
-        return false;
-      }
-    }
-    
     toast({
         title: 'Login Failed',
-        description: 'User not found.',
+        description: 'Invalid credentials or user not found.',
         variant: 'destructive',
     });
     return false;

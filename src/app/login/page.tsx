@@ -35,7 +35,7 @@ export default function StudentLoginPage() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setTimeout(() => {
-      const success = login(values.email, values.password);
+      const success = login(values.email, values.password, 'student');
       if (!success) {
         setIsLoading(false);
       }

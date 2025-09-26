@@ -35,7 +35,7 @@ export default function AdminLoginPage() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setTimeout(() => {
-      const success = login(values.username, values.password);
+      const success = login(values.username, values.password, 'admin');
       if (!success) {
         setIsLoading(false);
       }
