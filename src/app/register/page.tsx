@@ -47,6 +47,7 @@ export default function StudentRegisterPage() {
         course: values.course,
         year: values.year as 'FY' | 'SY' | 'TY' | undefined,
     }, 'student');
+
     if (!success) {
       setIsLoading(false);
     }
