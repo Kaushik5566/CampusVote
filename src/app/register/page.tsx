@@ -23,10 +23,11 @@ const formSchema = z.object({
   collegeName: z.string().min(2, { message: 'College name must be at least 2 characters.' }),
   course: z.string({ required_error: 'Please select a course.' }),
   year: z.enum(years).optional(),
-  semester: z.enum(semesters).optional(),
+  semester: z.string().optional(),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
+
 
 const coursesWithYears = ['BSC-IT', 'BSC-DS', 'BBI', 'BAF', 'BCOM', 'BMS'];
 
@@ -56,7 +57,7 @@ export default function StudentRegisterPage() {
         collegeName: values.collegeName,
         course: values.course,
         year: values.year,
-        semester: values.semester,
+        semester: values.semester as any,
     }, 'student');
     if (!success) {
       setIsLoading(false);
