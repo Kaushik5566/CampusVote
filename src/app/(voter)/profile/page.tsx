@@ -5,7 +5,9 @@ import { useAuth } from '@/components/auth-provider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { format } from 'date-fns';
-import { User as UserIcon, Building, GraduationCap, Calendar, Mail, Hash } from 'lucide-react';
+import { User as UserIcon, Building, GraduationCap, Calendar, Hash, Edit } from 'lucide-react';
+import { StudentProfileForm } from '@/components/voter/student-profile-form';
+import { Button } from '@/components/ui/button';
 
 function ProfileDetail({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value?: string }) {
     if (!value) return null;
@@ -39,9 +41,14 @@ export default function ProfilePage() {
                         <AvatarImage src={`https://api.dicebear.com/8.x/initials/svg?seed=${student.name}`} alt={student.name} />
                         <AvatarFallback>{student.name.substring(0, 2)}</AvatarFallback>
                     </Avatar>
-                    <div>
+                    <div className="relative">
                         <CardTitle className="font-headline text-3xl text-primary">{student.name}</CardTitle>
                         <CardDescription className="text-lg">{student.id}</CardDescription>
+                         <StudentProfileForm student={student}>
+                            <Button variant="ghost" size="icon" className="absolute -right-10 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary">
+                                <Edit className="h-5 w-5" />
+                            </Button>
+                        </StudentProfileForm>
                     </div>
                 </CardHeader>
                 <CardContent className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
@@ -54,4 +61,3 @@ export default function ProfilePage() {
         </div>
     );
 }
-

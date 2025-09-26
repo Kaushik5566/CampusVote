@@ -26,6 +26,7 @@ type AuthContextType = {
   setVotingEndDate: (date: Date) => void;
   electionHistory: Election[];
   archiveCurrentElection: () => void;
+  updateStudentDetails: (updatedStudent: User) => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -299,9 +300,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const updateStudentDetails = (updatedStudent: User) => {
+    setUsers(prev => prev.map(u => u.id === updatedStudent.id ? updatedStudent : u));
+    setUser(updatedStudent);
+    toast({
+        title: 'Profile Updated',
+        description: 'Your details have been successfully updated.',
+    });
+  };
+
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection }}>
+    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection, updateStudentDetails }}>
       {!loading && children}
     </AuthContext.Provider>
   );
