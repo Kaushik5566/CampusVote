@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect } from 'react';
@@ -6,6 +7,8 @@ import { useAuth } from '@/components/auth-provider';
 import {
   Sheet,
   SheetContent,
+  SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -96,6 +99,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col p-0">
+               <SheetHeader className="p-4 border-b">
+                <SheetTitle className="sr-only">Site Navigation</SheetTitle>
+              </SheetHeader>
               <AdminSidebarNav />
             </SheetContent>
           </Sheet>
