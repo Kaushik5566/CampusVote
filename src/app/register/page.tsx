@@ -15,18 +15,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/components/auth-provider';
 import { Logo } from '@/components/logo';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { courses, semesters } from '@/lib/data';
+import { courses, years } from '@/lib/data';
+import type { User } from '@/lib/types';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   collegeName: z.string().min(2, { message: 'College name must be at least 2 characters.' }),
   course: z.string({ required_error: 'Please select a course.' }),
-  semester: z.string().optional(),
+  year: z.enum(years).optional(),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
 
-const coursesWithSemesters = ['BSC-IT', 'BSC-DS', 'BBI', 'BAF', 'BCOM', 'BMS'];
+const coursesWithYears = ['BSC-IT', 'BSC-DS', 'BBI', 'BAF', 'BCOM', 'BMS'];
 
 export default function StudentRegisterPage() {
   const { register } = useAuth();
@@ -44,7 +45,7 @@ export default function StudentRegisterPage() {
   });
 
   const selectedCourse = form.watch('course');
-  const showSemesterField = coursesWithSemesters.includes(selectedCourse);
+  const showYearField = coursesWithYears.includes(selectedCourse);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -53,7 +54,7 @@ export default function StudentRegisterPage() {
         name: values.name, 
         collegeName: values.collegeName,
         course: values.course,
-        semester: values.semester ? parseInt(values.semester) : undefined,
+        year: values.year,
     }, 'student');
     if (!success) {
       setIsLoading(false);
@@ -124,23 +125,23 @@ export default function StudentRegisterPage() {
                     </FormItem>
                   )}
                 />
-                {showSemesterField && (
+                {showYearField && (
                     <FormField
                     control={form.control}
-                    name="semester"
+                    name="year"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Semester</FormLabel>
+                        <FormLabel>Year</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select sem" />
+                              <SelectValue placeholder="Select year" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {semesters.map((sem) => (
-                              <SelectItem key={sem} value={sem.toString()}>
-                                {sem}
+                            {years.map((year) => (
+                              <SelectItem key={year} value={year}>
+                                {year}
                               </SelectItem>
                             ))}
                           </SelectContent>

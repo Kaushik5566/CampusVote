@@ -3,8 +3,8 @@ import type { User, Admin, Candidate, CandidatePosition } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
 export const mockUsers: User[] = [
-  { id: 'student1@college.edu', name: 'John Doe', collegeName: 'State University', course: 'BSC-IT', semester: 3, type: 'student', hasVoted: false },
-  { id: 'student2@college.edu', name: 'Jane Smith', collegeName: 'City College', course: 'BCOM', semester: 5, type: 'student', hasVoted: true },
+  { id: 'student1@college.edu', name: 'John Doe', collegeName: 'State University', course: 'BSC-IT', year: 'SY', type: 'student', hasVoted: false },
+  { id: 'student2@college.edu', name: 'Jane Smith', collegeName: 'City College', course: 'BCOM', year: 'TY', type: 'student', hasVoted: true },
 ];
 
 export const mockAdmins: Admin[] = [
@@ -69,4 +69,4 @@ export const positions: CandidatePosition[] = ['President', 'Vice-President', 'S
 
 export const courses: string[] = ['FYJC', 'SYJC', 'BSC-IT', 'BSC-DS', 'BBI', 'BAF', 'BCOM', 'BMS'];
 
-export const semesters: number[] = [1, 2, 3, 4, 5, 6];
+export const years: ('FY' | 'SY' | 'TY')[] = ['FY', 'SY', 'TY'];

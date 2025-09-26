@@ -36,9 +36,9 @@
           "type": "string",
           "description": "The course the student is enrolled in."
         },
-        "semester": {
-          "type": "number",
-          "description": "The semester the student is currently in, if applicable."
+        "year": {
+          "type": "string",
+          "description": "The year the student is currently in (e.g., FY, SY, TY), if applicable."
         },
         "hasVoted": {
           "type": "boolean",
