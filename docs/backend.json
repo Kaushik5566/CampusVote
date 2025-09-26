@@ -28,6 +28,11 @@
           "type": "string",
           "description": "The student's last name."
         },
+        "dob": {
+            "type": "string",
+            "description": "The student's date of birth.",
+            "format": "date"
+        },
         "collegeName": {
           "type": "string",
           "description": "The name of the college the student attends."
@@ -51,6 +56,7 @@
         "email",
         "firstName",
         "lastName",
+        "dob",
         "hasVoted",
         "collegeName",
         "course"
