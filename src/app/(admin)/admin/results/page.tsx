@@ -33,8 +33,8 @@ export default function AdminResultsPage() {
   }, {} as Record<string, any>);
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <div className="lg:col-span-4 space-y-6">
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+        <div className="lg:col-span-7 space-y-6">
             <Card>
                 <CardHeader>
                     <CardTitle>Winners</CardTitle>
@@ -44,6 +44,8 @@ export default function AdminResultsPage() {
                     <WinnersDisplay winners={Object.values(winners)} />
                 </CardContent>
             </Card>
+        </div>
+        <div className="lg:col-span-4 space-y-6">
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
