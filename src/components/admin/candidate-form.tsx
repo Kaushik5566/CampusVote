@@ -34,7 +34,7 @@ const formSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters.'),
   position: z.string().min(3, { message: 'Position must be at least 3 characters.' }),
   manifesto: z.string().min(10, 'Manifesto must be at least 10 characters.'),
-  imageUrl: z.string().url({ message: 'Please enter a valid URL.' }),
+  imageUrl: z.string().url({ message: 'Please enter a valid URL.' }).optional().or(z.literal('')),
 });
 
 type CandidateFormProps = {
@@ -83,7 +83,11 @@ export function CandidateForm({ candidate, children }: CandidateFormProps) {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (candidate) {
-      updateCandidate({ ...candidate, ...values });
+      updateCandidate({ 
+        ...candidate, 
+        ...values,
+        imageUrl: values.imageUrl || candidate.imageUrl, // Don't overwrite with empty string
+      });
       toast({ title: 'Candidate Updated', description: `${values.name} has been updated.`});
     } else {
       addCandidate(values);
@@ -136,7 +140,7 @@ export function CandidateForm({ candidate, children }: CandidateFormProps) {
               name="imageUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Image URL</FormLabel>
+                  <FormLabel>Image URL (Optional)</FormLabel>
                   <FormControl>
                     <Input placeholder="https://example.com/image.png" {...field} />
                   </FormControl>
