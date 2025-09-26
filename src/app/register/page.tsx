@@ -160,8 +160,8 @@ export default function StudentRegisterPage() {
                     <FormControl>
                       <Input
                         type="text"
-                        placeholder="MM/DD/YYYY"
-                        value={field.value ? format(field.value, 'MM/dd/yyyy') : ''}
+                        placeholder="DD/MM/YYYY"
+                        value={field.value ? format(field.value, 'dd/MM/yyyy') : ''}
                         onChange={(e) => {
                           const date = new Date(e.target.value);
                           if (!isNaN(date.getTime())) {
