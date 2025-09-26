@@ -16,7 +16,6 @@ import { useAuth } from '@/components/auth-provider';
 import { Logo } from '@/components/logo';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { courses, years, semesters } from '@/lib/data';
-import type { User } from '@/lib/types';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -56,7 +55,7 @@ export default function StudentRegisterPage() {
         name: values.name, 
         collegeName: values.collegeName,
         course: values.course,
-        year: values.year as any,
+        year: values.year,
         semester: values.semester,
     }, 'student');
     if (!success) {
