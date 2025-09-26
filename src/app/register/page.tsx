@@ -21,6 +21,7 @@ import { CalendarIcon, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { courses, years } from '@/lib/data';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { Textarea } from '@/components/ui/textarea';
 
 const formSchema = z.object({
     name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -32,6 +33,7 @@ const formSchema = z.object({
     collegeName: z.string().min(3, { message: 'College name is required.' }),
     course: z.string({ required_error: 'Please select a course.' }),
     year: z.enum(['FY', 'SY', 'TY']).optional(),
+    securityAnswer: z.string().min(1, { message: 'Security answer is required.' }),
   })
   .refine(data => {
       const coursesRequiringYear = ['BSC-IT', 'BSC-DS', 'BBI', 'BAF', 'BCOM', 'BMS'];
@@ -57,6 +59,7 @@ export default function StudentRegisterPage() {
       email: '',
       password: '',
       collegeName: '',
+      securityAnswer: '',
     },
   });
 
@@ -74,6 +77,8 @@ export default function StudentRegisterPage() {
             collegeName: values.collegeName,
             course: values.course,
             year: values.year,
+            securityQuestion: 'Whom do you consider your role model?',
+            securityAnswer: values.securityAnswer,
         }, 'student');
 
         if (success) {
@@ -261,6 +266,23 @@ export default function StudentRegisterPage() {
                   )}
                 />
               )}
+
+              <FormField
+                control={form.control}
+                name="securityAnswer"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Whom do you consider your role model?</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter your answer here"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

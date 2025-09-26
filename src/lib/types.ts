@@ -19,6 +19,8 @@ export type User = {
   year?: 'FY' | 'SY' | 'TY';
   type: 'student';
   hasVoted: boolean;
+  securityQuestion: string;
+  securityAnswer: string;
 };
 
 export type Admin = {
@@ -35,6 +37,8 @@ export type AuthUser = {
     collegeName?: string;
     course?: string;
     year?: 'FY' | 'SY' | 'TY';
+    securityQuestion: string;
+    securityAnswer: string;
 }
 
 export type Election = {

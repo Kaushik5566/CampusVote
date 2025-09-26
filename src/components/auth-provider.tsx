@@ -192,7 +192,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           course: newUser.course || 'N/A',
           year: newUser.year,
           type: 'student', 
-          hasVoted: false 
+          hasVoted: false,
+          securityQuestion: newUser.securityQuestion,
+          securityAnswer: newUser.securityAnswer,
       };
       setUsers(prev => [...prev, newStudent]);
       setUser(newStudent);
