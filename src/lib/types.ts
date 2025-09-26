@@ -15,6 +15,7 @@ export type User = {
   name: string;
   collegeName: string;
   course: string;
+  semester?: number;
   type: 'student';
   hasVoted: boolean;
 };
@@ -31,6 +32,7 @@ export type AuthUser = {
     name: string;
     collegeName?: string;
     course?: string;
+    semester?: number;
 }
 
 export type Election = {
