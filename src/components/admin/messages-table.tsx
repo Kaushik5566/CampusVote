@@ -7,6 +7,7 @@ import { useCollection, useFirebase, useMemoFirebase, WithId } from '@/firebase'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
+import { useAuth } from '../auth-provider';
 
 interface ContactMessage {
     name: string;
@@ -19,11 +20,12 @@ interface ContactMessage {
 
 export function MessagesTable() {
     const { firestore } = useFirebase();
+    const { user } = useAuth();
 
     const messagesCollectionQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
+        if (!firestore || !user || user.type !== 'admin') return null;
         return query(collection(firestore, 'contact_messages'), orderBy('timestamp', 'desc'));
-    }, [firestore]);
+    }, [firestore, user]);
 
     const { data: messages, isLoading } = useCollection<ContactMessage>(messagesCollectionQuery);
 
