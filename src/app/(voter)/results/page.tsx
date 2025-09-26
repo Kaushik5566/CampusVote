@@ -56,7 +56,15 @@ export default function ResultsPage() {
         </p>
       </div>
       <div className="space-y-8">
-        <WinnersDisplay winners={Object.values(winners)} />
+        <Card>
+            <CardHeader>
+                <CardTitle>Election Winners</CardTitle>
+                <CardDescription>The candidate with the most votes for each position.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <WinnersDisplay winners={Object.values(winners)} />
+            </CardContent>
+        </Card>
         <ResultsChart data={sortedCandidates} />
         <Card>
           <CardHeader>
