@@ -57,9 +57,9 @@ export function ForgotPasswordDialog({ children }: { children: React.ReactNode }
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
 
-  const emailForm = useForm<z.infer<typeof emailSchema>>({ resolver: zodResolver(emailSchema) });
-  const answerForm = useForm<z.infer<typeof answerSchema>>({ resolver: zodResolver(answerSchema) });
-  const passwordForm = useForm<z.infer<typeof passwordSchema>>({ resolver: zodResolver(passwordSchema) });
+  const emailForm = useForm<z.infer<typeof emailSchema>>({ resolver: zodResolver(emailSchema), defaultValues: { email: '' } });
+  const answerForm = useForm<z.infer<typeof answerSchema>>({ resolver: zodResolver(answerSchema), defaultValues: { answer: '' } });
+  const passwordForm = useForm<z.infer<typeof passwordSchema>>({ resolver: zodResolver(passwordSchema), defaultValues: { newPassword: '', confirmPassword: '' } });
 
   const handleEmailSubmit = (values: z.infer<typeof emailSchema>) => {
     setIsLoading(true);
