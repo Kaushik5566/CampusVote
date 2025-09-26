@@ -62,57 +62,70 @@ export function ForgotPasswordDialog({ children }: { children: React.ReactNode }
   const passwordForm = useForm<z.infer<typeof passwordSchema>>({ resolver: zodResolver(passwordSchema), defaultValues: { newPassword: '', confirmPassword: '' } });
 
   const handleEmailSubmit = (values: z.infer<typeof emailSchema>) => {
-    const foundStudent = findStudentByEmail(values.email);
-    if (foundStudent) {
-        setStudent(foundStudent);
-        setStep('question');
-    } else {
-        toast({
-            title: 'Error',
-            description: 'No student found with that email address.',
-            variant: 'destructive',
-        });
-    }
+    setIsLoading(true);
+    // Simulate a quick check
+    setTimeout(() => {
+        const foundStudent = findStudentByEmail(values.email);
+        if (foundStudent) {
+            setStudent(foundStudent);
+            setStep('question');
+        } else {
+            toast({
+                title: 'Error',
+                description: 'No student found with that email address.',
+                variant: 'destructive',
+            });
+        }
+        setIsLoading(false);
+    }, 500);
   };
 
   const handleAnswerSubmit = (values: z.infer<typeof answerSchema>) => {
     if (!student) return;
-    const isCorrect = verifySecurityAnswer(student.id, values.answer);
-    if (isCorrect) {
-      setStep('reset');
-    } else {
-      toast({
-        title: 'Incorrect Answer',
-        description: 'The security answer did not match.',
-        variant: 'destructive',
-      });
-    }
+    setIsLoading(true);
+    setTimeout(() => {
+        const isCorrect = verifySecurityAnswer(student.id, values.answer);
+        if (isCorrect) {
+          setStep('reset');
+        } else {
+          toast({
+            title: 'Incorrect Answer',
+            description: 'The security answer did not match.',
+            variant: 'destructive',
+          });
+        }
+        setIsLoading(false);
+    }, 500);
   };
 
   const handlePasswordSubmit = (values: z.infer<typeof passwordSchema>) => {
     if (!student) return;
-    const success = resetStudentPassword(student.id, values.newPassword);
-    if (success) {
-      toast({
-        title: 'Password Reset Successful',
-        description: 'You can now log in with your new password.',
-      });
-      setOpen(false);
-      // Reset state on close
-      setTimeout(() => {
-        setStep('email');
-        setStudent(null);
-        emailForm.reset();
-        answerForm.reset();
-        passwordForm.reset();
-      }, 500);
-    } else {
-        toast({
-            title: 'Error',
-            description: 'Could not reset password. Please try again.',
-            variant: 'destructive',
-        });
-    }
+    setIsLoading(true);
+    setTimeout(() => {
+        const success = resetStudentPassword(student.id, values.newPassword);
+        if (success) {
+          toast({
+            title: 'Password Reset Successful',
+            description: 'You can now log in with your new password.',
+          });
+          setOpen(false);
+          // Reset state on close
+          setTimeout(() => {
+            setStep('email');
+            setStudent(null);
+            emailForm.reset();
+            answerForm.reset();
+            passwordForm.reset();
+          }, 300);
+        } else {
+            toast({
+                title: 'Error',
+                description: 'Could not reset password. Please try again.',
+                variant: 'destructive',
+            });
+        }
+        setIsLoading(false);
+    }, 500);
   };
 
   const getStepContent = () => {
@@ -246,7 +259,20 @@ export function ForgotPasswordDialog({ children }: { children: React.ReactNode }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+        setOpen(isOpen);
+        if (!isOpen) {
+             // Reset state when dialog is closed
+            setTimeout(() => {
+                setStep('email');
+                setStudent(null);
+                setIsLoading(false);
+                emailForm.reset();
+                answerForm.reset();
+                passwordForm.reset();
+            }, 300);
+        }
+    }}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         {getStepContent()}
