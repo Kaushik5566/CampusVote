@@ -35,7 +35,7 @@ function AdminSidebarNav() {
   return (
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center border-b px-4 lg:h-16 lg:px-6">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
+        <Link href="/admin/dashboard" className="flex items-center gap-2 font-semibold">
           <Logo className="h-6 w-6 text-primary" />
           <span className="">CampusVote</span>
         </Link>
