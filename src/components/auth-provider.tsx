@@ -27,6 +27,9 @@ type AuthContextType = {
   electionHistory: Election[];
   archiveCurrentElection: () => void;
   updateStudentDetails: (updatedStudent: User) => void;
+  findStudentByEmail: (email: string) => User | undefined;
+  verifySecurityAnswer: (email: string, answer: string) => boolean;
+  resetStudentPassword: (email: string, newPassword: string) => boolean;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -151,20 +154,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = (id: string, pass: string, userType: 'student' | 'admin'): boolean => {
     if (userType === 'student') {
         const student = users.find(u => u.id === id);
-        if (student) {
-            // For mock purposes, any password is fine for students for now
+        if (student && student.password === pass) {
             setUser(student);
             router.push('/dashboard');
             return true;
         }
     } else if (userType === 'admin') {
         const admin = admins.find(a => a.id === id);
-        if (admin) {
-            if (admin.password === pass) {
-                setUser(admin);
-                router.push('/admin/dashboard');
-                return true;
-            }
+        if (admin && admin.password === pass) {
+            setUser(admin);
+            router.push('/admin/dashboard');
+            return true;
         }
     }
 
@@ -195,6 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           hasVoted: false,
           securityQuestion: newUser.securityQuestion,
           securityAnswer: newUser.securityAnswer,
+          password: newUser.password,
       };
       setUsers(prev => [...prev, newStudent]);
       setUser(newStudent);
@@ -211,7 +212,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     const userType = user?.type;
     setUser(null);
-    // Don't clear all session storage, to persist users
     sessionStorage.removeItem('user');
     
     if (userType === 'admin') {
@@ -286,9 +286,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setElectionHistory(prev => [newElection, ...prev]);
 
-    // Reset votes for the next election
     setCandidates(prev => prev.map(c => ({...c, votes: 0})));
-    // Reset users' voted status
     setUsers(prev => prev.map(u => ({...u, hasVoted: false})));
 
     toast({
@@ -306,9 +304,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const findStudentByEmail = (email: string): User | undefined => {
+    return users.find(u => u.id === email);
+  };
+
+  const verifySecurityAnswer = (email: string, answer: string): boolean => {
+    const student = findStudentByEmail(email);
+    // Case-insensitive comparison
+    return !!student && student.securityAnswer.toLowerCase() === answer.toLowerCase();
+  };
+
+  const resetStudentPassword = (email: string, newPassword: string): boolean => {
+      const studentExists = users.some(u => u.id === email);
+      if (!studentExists) {
+        return false;
+      }
+      setUsers(prevUsers => prevUsers.map(u => u.id === email ? {...u, password: newPassword} : u));
+      return true;
+  };
+
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection, updateStudentDetails }}>
+    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection, updateStudentDetails, findStudentByEmail, verifySecurityAnswer, resetStudentPassword }}>
       {!loading && children}
     </AuthContext.Provider>
   );

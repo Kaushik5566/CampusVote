@@ -1,4 +1,5 @@
 
+
 export type CandidatePosition = 'President' | 'Vice-President' | 'Secretary';
 
 export type Candidate = {
@@ -21,6 +22,7 @@ export type User = {
   hasVoted: boolean;
   securityQuestion: string;
   securityAnswer: string;
+  password?: string;
 };
 
 export type Admin = {
@@ -39,6 +41,7 @@ export type AuthUser = {
     year?: 'FY' | 'SY' | 'TY';
     securityQuestion: string;
     securityAnswer: string;
+    password?: string;
 }
 
 export type Election = {

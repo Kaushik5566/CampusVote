@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -13,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/components/auth-provider';
 import { Logo } from '@/components/logo';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { ForgotPasswordDialog } from '@/components/voter/forgot-password-dialog';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -23,6 +25,7 @@ export default function StudentLoginPage() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,10 +37,12 @@ export default function StudentLoginPage() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
+    setLoginError(false);
     setTimeout(() => {
       const success = login(values.email, values.password, 'student');
       if (!success) {
         setIsLoading(false);
+        setLoginError(true);
       }
     }, 1000);
   }
@@ -73,7 +78,16 @@ export default function StudentLoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <div className="flex justify-between items-center">
+                        <FormLabel>Password</FormLabel>
+                        {loginError && (
+                           <ForgotPasswordDialog>
+                             <button type="button" className="text-sm font-medium text-primary hover:underline">
+                               Forgot Password?
+                             </button>
+                           </ForgotPasswordDialog>
+                        )}
+                    </div>
                     <div className="relative">
                       <FormControl>
                         <Input
