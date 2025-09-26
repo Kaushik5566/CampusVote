@@ -73,8 +73,6 @@ export function ForgotPasswordDialog({ children }: { children: React.ReactNode }
         description: 'No student found with that email address.',
         variant: 'destructive',
       });
-      setIsLoading(false);
-      return; // This was missing
     }
     setIsLoading(false);
   };
