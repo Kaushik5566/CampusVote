@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -36,7 +36,7 @@ const formSchema = z.object({
     }
 }, {
     message: 'Invalid date. Please check day, month, and year.',
-    path: ['dob_day'], // Report error on the first field
+    path: ['dob_day'], 
 });
 
 const coursesRequiringYear = ['BSC-IT', 'BSC-DS', 'BBI', 'BAF', 'BCOM', 'BMS'];
@@ -45,7 +45,6 @@ export default function StudentRegisterPage() {
   const { register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [age, setAge] = useState<number | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,34 +58,6 @@ export default function StudentRegisterPage() {
 
   const watchedCourse = form.watch('course');
   const showYearField = coursesRequiringYear.includes(watchedCourse);
-
-  const watchedDay = form.watch('dob_day');
-  const watchedMonth = form.watch('dob_month');
-  const watchedYear = form.watch('dob_year');
-
-  useEffect(() => {
-    if (watchedDay && watchedMonth && watchedYear && watchedYear > 1900 && watchedYear <= new Date().getFullYear()) {
-        try {
-            const birthDate = new Date(watchedYear, watchedMonth - 1, watchedDay);
-             if (birthDate.getFullYear() !== watchedYear || birthDate.getMonth() !== watchedMonth - 1 || birthDate.getDate() !== watchedDay) {
-                setAge(null); // Invalid date like Feb 30
-                return;
-            }
-
-            const today = new Date();
-            let calculatedAge = today.getFullYear() - birthDate.getFullYear();
-            const m = today.getMonth() - birthDate.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                calculatedAge--;
-            }
-            setAge(calculatedAge >= 0 ? calculatedAge : null);
-        } catch {
-            setAge(null);
-        }
-    } else {
-        setAge(null);
-    }
-  }, [watchedDay, watchedMonth, watchedYear]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -132,10 +103,7 @@ export default function StudentRegisterPage() {
                 )}
               />
                <FormItem>
-                    <div className="flex items-end justify-between">
-                        <FormLabel>Date of birth</FormLabel>
-                        {age !== null && <span className="text-sm font-medium text-muted-foreground">Age: {age}</span>}
-                    </div>
+                    <FormLabel>Date of birth</FormLabel>
                     <div className="grid grid-cols-3 gap-3">
                          <FormField
                             control={form.control}
