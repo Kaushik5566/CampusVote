@@ -62,26 +62,21 @@ export function ForgotPasswordDialog({ children }: { children: React.ReactNode }
   const passwordForm = useForm<z.infer<typeof passwordSchema>>({ resolver: zodResolver(passwordSchema), defaultValues: { newPassword: '', confirmPassword: '' } });
 
   const handleEmailSubmit = (values: z.infer<typeof emailSchema>) => {
-    setIsLoading(true);
-    setTimeout(() => {
-        const foundStudent = findStudentByEmail(values.email);
-        if (foundStudent) {
-            setStudent(foundStudent);
-            setStep('question');
-        } else {
-            toast({
-                title: 'Error',
-                description: 'No student found with that email address.',
-                variant: 'destructive',
-            });
-        }
-        setIsLoading(false);
-    }, 500);
+    const foundStudent = findStudentByEmail(values.email);
+    if (foundStudent) {
+        setStudent(foundStudent);
+        setStep('question');
+    } else {
+        toast({
+            title: 'Error',
+            description: 'No student found with that email address.',
+            variant: 'destructive',
+        });
+    }
   };
 
   const handleAnswerSubmit = (values: z.infer<typeof answerSchema>) => {
     if (!student) return;
-    setIsLoading(true);
     const isCorrect = verifySecurityAnswer(student.id, values.answer);
     if (isCorrect) {
       setStep('reset');
@@ -92,12 +87,10 @@ export function ForgotPasswordDialog({ children }: { children: React.ReactNode }
         variant: 'destructive',
       });
     }
-    setIsLoading(false);
   };
 
   const handlePasswordSubmit = (values: z.infer<typeof passwordSchema>) => {
     if (!student) return;
-    setIsLoading(true);
     const success = resetStudentPassword(student.id, values.newPassword);
     if (success) {
       toast({
@@ -120,7 +113,6 @@ export function ForgotPasswordDialog({ children }: { children: React.ReactNode }
             variant: 'destructive',
         });
     }
-    setIsLoading(false);
   };
 
   const getStepContent = () => {
