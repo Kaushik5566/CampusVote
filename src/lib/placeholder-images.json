@@ -35,6 +35,12 @@
       "description": "Photo of Fiona Garcia",
       "imageUrl": "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx3b21hbiUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NTg3MDQ0NDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "woman professional"
+    },
+    {
+      "id": "candidates-header",
+      "description": "A group of diverse students studying together",
+      "imageUrl": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxncm91cCUyMG9mJTIwc3R1ZGVudHN8ZW58MHx8fHwxNzU5MjM4NjQ3fDA&ixlib=rb-4.1.0&q=80&w=1920",
+      "imageHint": "group students"
     }
   ]
 }
