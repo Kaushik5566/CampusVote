@@ -30,6 +30,9 @@ type AuthContextType = {
   findStudentByEmail: (email: string) => User | undefined;
   verifySecurityAnswer: (email: string, answer: string) => boolean;
   resetStudentPassword: (email: string, newPassword: string) => boolean;
+  admins: Admin[];
+  addAdmin: (admin: Omit<Admin, 'type'>) => boolean;
+  deleteAdmin: (adminId: string) => boolean;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -168,12 +171,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
-    toast({
-        title: 'Login Failed',
-        description: 'Invalid credentials or user not found.',
-        variant: 'destructive',
-    });
+    setLoginError(true);
     return false;
+  };
+
+  const setLoginError = (isError: boolean) => {
+    // This is a placeholder function. The actual implementation in the login page
+    // will use its own local state to show/hide the error message.
+    // The key change is that `login` now reliably returns false on failure.
   };
 
   const register = (newUser: AuthUser, type: 'student' | 'admin'): boolean => {
@@ -324,9 +329,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return true;
   };
 
+  const addAdmin = (newAdminData: Omit<Admin, 'type'>): boolean => {
+    if (admins.find(a => a.id === newAdminData.id)) {
+        toast({
+            title: 'Action Failed',
+            description: `An admin with the username "${newAdminData.id}" already exists.`,
+            variant: 'destructive',
+        });
+        return false;
+    }
+    const newAdmin: Admin = {
+        ...newAdminData,
+        type: 'admin',
+    };
+    setAdmins(prev => [...prev, newAdmin]);
+    return true;
+  };
+
+  const deleteAdmin = (adminId: string): boolean => {
+    if (adminId === user?.id) {
+        toast({
+            title: 'Action Forbidden',
+            description: 'You cannot delete your own admin account.',
+            variant: 'destructive',
+        });
+        return false;
+    }
+    setAdmins(prev => prev.filter(a => a.id !== adminId));
+    return true;
+  };
+
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection, updateStudentDetails, findStudentByEmail, verifySecurityAnswer, resetStudentPassword }}>
+    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection, updateStudentDetails, findStudentByEmail, verifySecurityAnswer, resetStudentPassword, admins, addAdmin, deleteAdmin }}>
       {!loading && children}
     </AuthContext.Provider>
   );

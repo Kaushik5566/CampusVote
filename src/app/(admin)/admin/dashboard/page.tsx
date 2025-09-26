@@ -3,7 +3,7 @@
 
 import { useAuth } from '@/components/auth-provider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Vote, Calendar } from 'lucide-react';
+import { Users, Vote, Calendar, UserPlus } from 'lucide-react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,7 @@ function StatCard({ icon: Icon, title, value, footer }: { icon: React.ElementTyp
 }
 
 export default function AdminDashboardPage() {
-    const { candidates, votingStartDate, votingEndDate } = useAuth();
+    const { candidates, votingStartDate, votingEndDate, admins } = useAuth();
     const totalVotes = candidates.reduce((sum, candidate) => sum + candidate.votes, 0);
 
     return (
@@ -33,7 +33,7 @@ export default function AdminDashboardPage() {
                 <h1 className="text-lg font-semibold md:text-2xl">Dashboard</h1>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <StatCard 
                     icon={Users}
                     title="Total Candidates"
@@ -45,6 +45,12 @@ export default function AdminDashboardPage() {
                     title="Total Votes Cast"
                     value={totalVotes}
                     footer="Across all positions"
+                />
+                 <StatCard 
+                    icon={UserPlus}
+                    title="Total Admins"
+                    value={admins.length}
+                    footer="Number of admin accounts"
                 />
                 <StatCard 
                     icon={Calendar}
@@ -67,10 +73,13 @@ export default function AdminDashboardPage() {
                         <Button asChild variant="outline">
                             <Link href="/admin/results">View Live Results</Link>
                         </Button>
+                         <Button asChild variant="outline">
+                            <Link href="/admin/manage-admins">Manage Admins</Link>
+                        </Button>
                         <Button asChild variant="outline">
                             <Link href="/admin/messages">Check Messages</Link>
                         </Button>
-                        <Button asChild variant="outline">
+                        <Button asChild variant="outline" className="col-span-2">
                             <Link href="/admin/history">View History</Link>
                         </Button>
                     </CardContent>
