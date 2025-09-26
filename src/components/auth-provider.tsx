@@ -188,6 +188,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       const newStudent: User = { 
           ...newUser,
+          rollNo: newUser.rollNo,
           collegeName: newUser.collegeName || 'N/A', 
           course: newUser.course || 'N/A',
           year: newUser.year,

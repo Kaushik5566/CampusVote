@@ -26,6 +26,7 @@ import { Textarea } from '@/components/ui/textarea';
 const formSchema = z.object({
     name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
     email: z.string().email({ message: 'Please enter a valid college email address.' }),
+    rollNo: z.string().min(1, { message: 'Roll No. is required.' }),
     password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
     dob: z.date({
       required_error: "A date of birth is required.",
@@ -57,6 +58,7 @@ export default function StudentRegisterPage() {
     defaultValues: {
       name: '',
       email: '',
+      rollNo: '',
       password: '',
       collegeName: '',
       securityAnswer: '',
@@ -73,6 +75,7 @@ export default function StudentRegisterPage() {
         const success = register({
             id: values.email,
             name: values.name,
+            rollNo: values.rollNo,
             dob: values.dob,
             collegeName: values.collegeName,
             course: values.course,
@@ -123,6 +126,19 @@ export default function StudentRegisterPage() {
                     <FormLabel>College Email</FormLabel>
                     <FormControl>
                       <Input placeholder="student@college.edu" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="rollNo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Roll No.</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Sem-Roll_No" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

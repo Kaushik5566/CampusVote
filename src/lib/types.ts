@@ -14,6 +14,7 @@ export type Candidate = {
 export type User = {
   id: string; // email or college ID
   name: string;
+  rollNo: string;
   dob: Date;
   collegeName: string;
   course: string;
@@ -35,6 +36,7 @@ export type Admin = {
 export type AuthUser = {
     id: string;
     name: string;
+    rollNo: string;
     dob: Date;
     collegeName?: string;
     course?: string;

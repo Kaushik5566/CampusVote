@@ -52,6 +52,7 @@ export default function ProfilePage() {
                     </div>
                 </CardHeader>
                 <CardContent className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <ProfileDetail icon={UserIcon} label="Roll No" value={student.rollNo} />
                     <ProfileDetail icon={Building} label="College Name" value={student.collegeName} />
                     <ProfileDetail icon={GraduationCap} label="Course" value={student.course} />
                     <ProfileDetail icon={Hash} label="Year" value={student.year} />

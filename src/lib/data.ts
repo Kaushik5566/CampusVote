@@ -3,8 +3,8 @@ import type { User, Admin, Candidate, CandidatePosition } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
 export const mockUsers: User[] = [
-  { id: 'student1@college.edu', name: 'John Doe', collegeName: 'State University', course: 'BSC-IT', year: 'SY', type: 'student', hasVoted: false, securityQuestion: 'Whom do you consider your role model?', securityAnswer: 'My Father', password: 'password1' },
-  { id: 'student2@college.edu', name: 'Jane Smith', collegeName: 'City College', course: 'BCOM', year: 'TY', type: 'student', hasVoted: true, securityQuestion: 'Whom do you consider your role model?', securityAnswer: 'My Mother', password: 'password2' },
+  { id: 'student1@college.edu', name: 'John Doe', rollNo: 'SY-123', collegeName: 'State University', course: 'BSC-IT', year: 'SY', type: 'student', hasVoted: false, securityQuestion: 'Whom do you consider your role model?', securityAnswer: 'My Father', password: 'password1' },
+  { id: 'student2@college.edu', name: 'Jane Smith', rollNo: 'TY-456', collegeName: 'City College', course: 'BCOM', year: 'TY', type: 'student', hasVoted: true, securityQuestion: 'Whom do you consider your role model?', securityAnswer: 'My Mother', password: 'password2' },
 ];
 
 export const mockAdmins: Admin[] = [

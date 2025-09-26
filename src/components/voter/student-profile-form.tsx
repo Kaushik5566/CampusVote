@@ -42,6 +42,7 @@ import { Calendar } from '../ui/calendar';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
+  rollNo: z.string().min(1, 'Roll No. is required.'),
   dob: z.date(),
   collegeName: z.string().min(3, 'College name is required.'),
   course: z.string(),
@@ -71,6 +72,7 @@ export function StudentProfileForm({ student, children }: StudentProfileFormProp
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: student?.name || '',
+      rollNo: student?.rollNo || '',
       dob: student?.dob ? new Date(student.dob) : new Date(),
       collegeName: student?.collegeName || '',
       course: student?.course || '',
@@ -107,6 +109,19 @@ export function StudentProfileForm({ student, children }: StudentProfileFormProp
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
                     <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="rollNo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Roll No.</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Sem-Roll_No" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
