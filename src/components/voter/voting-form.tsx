@@ -16,6 +16,7 @@ import { CheckCircle, Clock, Lock, UserSearch } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { cn } from '@/lib/utils';
 
 export function VotingForm() {
   const { candidates, submitVote, user, votingStartDate, votingEndDate } = useAuth();
