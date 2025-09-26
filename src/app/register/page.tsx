@@ -3,9 +3,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,14 +15,6 @@ import { Logo } from '@/components/logo';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { courses, years } from '@/lib/data';
 
-const formSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  collegeName: z.string().min(2, { message: 'College name must be at least 2 characters.' }),
-  course: z.string({ required_error: 'Please select a course.' }),
-  year: z.string().optional(),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
-});
 
 const coursesRequiringYear = ['BSC-IT', 'BSC-DS', 'BBI', 'BAF', 'BCOM', 'BMS'];
 
@@ -33,11 +23,12 @@ export default function StudentRegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm({
     defaultValues: {
       name: '',
       collegeName: '',
+      course: '',
+      year: '',
       email: '',
       password: '',
     },
@@ -46,7 +37,7 @@ export default function StudentRegisterPage() {
   const watchedCourse = form.watch('course');
   const showYearField = coursesRequiringYear.includes(watchedCourse);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: any) {
     setIsLoading(true);
 
     const success = register({
