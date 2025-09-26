@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | Admin | null>(null);
   const [candidates, setCandidates] = useState<Candidate[]>(mockCandidates);
   const [resultsPublished, setResultsPublished] = useState<boolean>(false);
-  const [votingStartDate, setVotingStartDate] = useState<Date>(new Date());
+  const [votingStartDate, setVotingStartDate] = useState<Date>(new Date(new Date().getTime() - 24 * 60 * 60 * 1000));
   const [votingEndDate, setVotingEndDate] = useState<Date>(() => {
     const d = new Date();
     d.setDate(d.getDate() + 7);
@@ -101,42 +101,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isLoaded) {
-        if (user) {
-            sessionStorage.setItem('user', JSON.stringify(user));
-        } else {
-            sessionStorage.removeItem('user');
+        try {
+            if (user) {
+                sessionStorage.setItem('user', JSON.stringify(user));
+            } else {
+                sessionStorage.removeItem('user');
+            }
+            sessionStorage.setItem('candidates', JSON.stringify(candidates));
+            sessionStorage.setItem('resultsPublished', JSON.stringify(resultsPublished));
+            sessionStorage.setItem('votingStartDate', JSON.stringify(votingStartDate));
+            sessionStorage.setItem('votingEndDate', JSON.stringify(votingEndDate));
+            sessionStorage.setItem('users', JSON.stringify(users));
+            sessionStorage.setItem('admins', JSON.stringify(admins));
+            sessionStorage.setItem('electionHistory', JSON.stringify(electionHistory));
+        } catch (error) {
+            console.error("Failed to save state to sessionStorage", error);
         }
     }
-  }, [user, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('candidates', JSON.stringify(candidates));
-  }, [candidates, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('resultsPublished', JSON.stringify(resultsPublished));
-  }, [resultsPublished, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('votingStartDate', JSON.stringify(votingStartDate));
-  }, [votingStartDate, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('votingEndDate', JSON.stringify(votingEndDate));
-  }, [votingEndDate, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('users', JSON.stringify(users));
-  }, [users, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('admins', JSON.stringify(admins));
-  }, [admins, isLoaded]);
-    
-  useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('electionHistory', JSON.stringify(electionHistory));
-  }, [electionHistory, isLoaded]);
-
+  }, [user, candidates, resultsPublished, votingStartDate, votingEndDate, users, admins, electionHistory, isLoaded]);
 
   const login = (id: string, pass: string, userType: 'student' | 'admin'): boolean => {
     if (userType === 'student') {
@@ -203,7 +185,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const userType = user?.type;
     setUser(null);
     if (typeof window !== 'undefined') {
-      sessionStorage.removeItem('user');
+      sessionStorage.clear();
     }
     
     if (userType === 'admin') {
@@ -344,6 +326,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAdmins(prev => prev.filter(a => a.id !== adminId));
     return true;
   };
+
+  if (!isLoaded) {
+    return <div className="flex h-screen w-full items-center justify-center"><p>Loading...</p></div>;
+  }
 
   return (
     <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection, updateStudentDetails, findStudentByEmail, verifySecurityAnswer, resetStudentPassword, admins, addAdmin, deleteAdmin }}>

@@ -27,11 +27,7 @@ export default function VoterLayout({
   }, [user, router, isClient]);
 
   if (!isClient || !user || user.type !== 'student') {
-    return (
-        <div className="flex h-screen w-full items-center justify-center">
-            <p>Loading...</p>
-        </div>
-    );
+    return null;
   }
 
   return (

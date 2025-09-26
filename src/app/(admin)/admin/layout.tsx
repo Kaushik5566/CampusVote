@@ -85,7 +85,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [user, router, isClient]);
 
   if (!isClient || !user || user.type !== 'admin') {
-    return <div className="flex h-screen w-full items-center justify-center"><p>Loading...</p></div>;
+    return null;
   }
   
   return (
