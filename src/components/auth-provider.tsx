@@ -189,7 +189,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           collegeName: newUser.collegeName || 'N/A', 
           course: newUser.course || 'N/A',
           year: newUser.year,
-          semester: newUser.semester,
           type: 'student', 
           hasVoted: false 
       };
