@@ -12,21 +12,16 @@ export default function VoterLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useAuth();
+  const { user, isLoaded } = useAuth();
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (isClient && (!user || user.type !== 'student')) {
+    if (isLoaded && (!user || user.type !== 'student')) {
       router.push('/login');
     }
-  }, [user, router, isClient]);
+  }, [user, isLoaded, router]);
 
-  if (!isClient || !user || user.type !== 'student') {
+  if (!isLoaded || !user || user.type !== 'student') {
     return null;
   }
 

@@ -8,13 +8,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { VotingPeriodSettings } from '@/components/admin/voting-period-settings';
 import { ArchiveElection } from '@/components/admin/archive-election';
-import { positions } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, UserSearch } from 'lucide-react';
 import { WinnersDisplay } from '@/components/results/winners-display';
 
 export default function AdminResultsPage() {
-  const { candidates } = useAuth();
+  const { candidates, positions } = useAuth();
 
   if (candidates.length === 0) {
     return (

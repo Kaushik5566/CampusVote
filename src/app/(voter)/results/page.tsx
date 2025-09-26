@@ -6,14 +6,13 @@ import { ResultsChart } from '@/components/results/results-chart';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Lock, Trophy, UserSearch } from 'lucide-react';
-import { positions } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { WinnersDisplay } from '@/components/results/winners-display';
 import type { Candidate } from '@/lib/types';
 
 
 export default function ResultsPage() {
-  const { candidates, resultsPublished } = useAuth();
+  const { candidates, resultsPublished, positions } = useAuth();
   
   if (!resultsPublished) {
     return (

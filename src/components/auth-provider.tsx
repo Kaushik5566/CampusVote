@@ -2,8 +2,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { mockUsers, mockAdmins, mockCandidates } from '@/lib/data';
+import { useRouter } from 'next/navigation';
+import { mockUsers, mockAdmins, mockCandidates, positions as staticPositions } from '@/lib/data';
 import type { User, Admin, Candidate, AuthUser, Election } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -33,6 +33,8 @@ type AuthContextType = {
   admins: Admin[];
   addAdmin: (admin: Omit<Admin, 'type'>) => boolean;
   deleteAdmin: (adminId: string) => boolean;
+  isLoaded: boolean;
+  positions: string[];
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -62,6 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [admins, setAdmins] = useState<Admin[]>(mockAdmins);
   const [electionHistory, setElectionHistory] = useState<Election[]>([]);
+  const [positions, setPositions] = useState<string[]>(staticPositions);
   
   const [isLoaded, setIsLoaded] = useState(false);
   const router = useRouter();
@@ -73,7 +76,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (storedUser) setUser(JSON.parse(storedUser, dateReviver));
 
         const storedCandidates = sessionStorage.getItem('candidates');
-        if (storedCandidates) setCandidates(JSON.parse(storedCandidates, dateReviver));
+        if (storedCandidates) {
+          const parsedCandidates = JSON.parse(storedCandidates, dateReviver);
+          setCandidates(parsedCandidates);
+          setPositions([...new Set(parsedCandidates.map((c: Candidate) => c.position))]);
+        }
         
         const storedResultsPublished = sessionStorage.getItem('resultsPublished');
         if (storedResultsPublished) setResultsPublished(JSON.parse(storedResultsPublished));
@@ -114,6 +121,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             sessionStorage.setItem('users', JSON.stringify(users));
             sessionStorage.setItem('admins', JSON.stringify(admins));
             sessionStorage.setItem('electionHistory', JSON.stringify(electionHistory));
+
+            setPositions([...new Set(candidates.map(c => c.position))]);
+
         } catch (error) {
             console.error("Failed to save state to sessionStorage", error);
         }
@@ -326,13 +336,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAdmins(prev => prev.filter(a => a.id !== adminId));
     return true;
   };
-
-  if (!isLoaded) {
-    return <div className="flex h-screen w-full items-center justify-center"><p>Loading...</p></div>;
-  }
-
+  
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection, updateStudentDetails, findStudentByEmail, verifySecurityAnswer, resetStudentPassword, admins, addAdmin, deleteAdmin }}>
+    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection, updateStudentDetails, findStudentByEmail, verifySecurityAnswer, resetStudentPassword, admins, addAdmin, deleteAdmin, isLoaded, positions }}>
       {children}
     </AuthContext.Provider>
   );

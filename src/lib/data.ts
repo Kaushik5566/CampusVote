@@ -70,5 +70,3 @@ export const positions: string[] = [...new Set(mockCandidates.map(c => c.positio
 export const courses: string[] = ['FYJC', 'SYJC', 'BSC-IT', 'BSC-DS', 'BBI', 'BAF', 'BCOM', 'BMS'];
 
 export const years: ('FY' | 'SY' | 'TY')[] = ['FY', 'SY', 'TY'];
-
-    

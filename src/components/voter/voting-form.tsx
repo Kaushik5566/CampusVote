@@ -4,7 +4,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { RadioGroup } from '@/components/ui/radio-group';
@@ -16,13 +16,10 @@ import { CheckCircle, Clock, Lock, UserSearch } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
-import { cn } from '@/lib/utils';
 
 export function VotingForm() {
-  const { candidates, submitVote, user, votingStartDate, votingEndDate } = useAuth();
+  const { candidates, submitVote, user, votingStartDate, votingEndDate, positions } = useAuth();
   
-  const positions = [...new Set(candidates.map(c => c.position))];
-
   const schemaObject = positions.reduce((acc, position) => {
     acc[position] = z.string({ required_error: `You must select a candidate for ${position}.` });
     return acc;

@@ -70,7 +70,7 @@ function AdminSidebarNav() {
 
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user, isLoaded } = useAuth();
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
 
@@ -79,12 +79,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, []);
 
   useEffect(() => {
-    if (isClient && (!user || user.type !== 'admin')) {
+    if (isLoaded && (!user || user.type !== 'admin')) {
       router.push('/admin/login');
     }
-  }, [user, router, isClient]);
+  }, [user, isLoaded, router]);
 
-  if (!isClient || !user || user.type !== 'admin') {
+  if (!isLoaded || !user || user.type !== 'admin') {
     return null;
   }
   
