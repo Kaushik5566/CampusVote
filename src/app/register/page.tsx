@@ -104,7 +104,7 @@ export default function StudentRegisterPage() {
                   <FormItem>
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="John Doe" {...field} />
+                      <Input placeholder="Tech Titans" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -198,7 +198,7 @@ export default function StudentRegisterPage() {
                   <FormItem>
                     <FormLabel>College Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g. State University" {...field} />
+                      <Input placeholder="Enter Your College Name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
