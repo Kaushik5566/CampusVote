@@ -11,13 +11,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/components/auth-provider';
 import { Logo } from '@/components/logo';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { courses } from '@/lib/data';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   collegeName: z.string().min(2, { message: 'College name must be at least 2 characters.' }),
+  course: z.string({ required_error: 'Please select a course.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
@@ -39,7 +42,12 @@ export default function StudentRegisterPage() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    const success = register({id: values.email, name: values.name, collegeName: values.collegeName }, 'student');
+    const success = register({
+        id: values.email, 
+        name: values.name, 
+        collegeName: values.collegeName,
+        course: values.course,
+    }, 'student');
     if (!success) {
       setIsLoading(false);
     }
@@ -80,6 +88,30 @@ export default function StudentRegisterPage() {
                     <FormControl>
                       <Input placeholder="Your College University" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="course"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Course</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your course" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {courses.map((course) => (
+                          <SelectItem key={course} value={course}>
+                            {course}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -141,5 +173,3 @@ export default function StudentRegisterPage() {
     </div>
   );
 }
-
-    
