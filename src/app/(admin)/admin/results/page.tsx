@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useAuth } from '@/components/auth-provider';
@@ -6,6 +7,7 @@ import { ResultsChart } from '@/components/results/results-chart';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { VotingPeriodSettings } from '@/components/admin/voting-period-settings';
+import { ArchiveElection } from '@/components/admin/archive-election';
 
 export default function AdminResultsPage() {
   const { candidates } = useAuth();
@@ -15,9 +17,12 @@ export default function AdminResultsPage() {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <div className="lg:col-span-4 space-y-6">
             <Card>
-                <CardHeader>
-                    <CardTitle>Live Vote Count</CardTitle>
-                    <CardDescription>Current vote tallies for all candidates.</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>Live Vote Count</CardTitle>
+                        <CardDescription>Current vote tallies for all candidates.</CardDescription>
+                    </div>
+                    <ArchiveElection />
                 </CardHeader>
                 <CardContent>
                     <Table>

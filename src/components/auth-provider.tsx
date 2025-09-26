@@ -1,10 +1,12 @@
+
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { mockUsers, mockAdmins, mockCandidates } from '@/lib/data';
-import type { User, Admin, Candidate, AuthUser } from '@/lib/types';
+import type { User, Admin, Candidate, AuthUser, Election } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
 
 type AuthContextType = {
   user: User | Admin | null;
@@ -22,6 +24,8 @@ type AuthContextType = {
   votingEndDate: Date;
   setVotingStartDate: (date: Date) => void;
   setVotingEndDate: (date: Date) => void;
+  electionHistory: Election[];
+  archiveCurrentElection: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -44,6 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [admins, setAdmins] = useState<Admin[]>(mockAdmins);
+  const [electionHistory, setElectionHistory] = useState<Election[]>([]);
   const router = useRouter();
   const pathname = usePathname();
   const { toast } = useToast();
@@ -57,6 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const storedAdmins = sessionStorage.getItem('admins');
       const storedVotingStartDate = sessionStorage.getItem('votingStartDate');
       const storedVotingEndDate = sessionStorage.getItem('votingEndDate');
+      const storedElectionHistory = sessionStorage.getItem('electionHistory');
 
       if (storedUser) {
         setUser(JSON.parse(storedUser));
@@ -78,6 +84,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       if (storedVotingEndDate) {
         setVotingEndDate(new Date(JSON.parse(storedVotingEndDate)));
+      }
+      if (storedElectionHistory) {
+        setElectionHistory(JSON.parse(storedElectionHistory));
       }
 
     } catch (error) {
@@ -125,6 +134,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (loading) return;
     sessionStorage.setItem('admins', JSON.stringify(admins));
     }, [admins, loading]);
+    
+    useEffect(() => {
+        if (loading) return;
+        sessionStorage.setItem('electionHistory', JSON.stringify(electionHistory));
+    }, [electionHistory, loading]);
 
 
   const login = (id: string, pass: string): boolean => {
@@ -239,9 +253,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setCandidates(prev => prev.filter(c => c.id !== candidateId));
   };
 
+  const archiveCurrentElection = () => {
+    const totalVotes = candidates.reduce((sum, c) => sum + c.votes, 0);
+    if (totalVotes === 0) {
+        toast({
+            title: "Archive Failed",
+            description: "Cannot archive an election with no votes.",
+            variant: "destructive",
+        });
+        return;
+    }
+
+    const newElection: Election = {
+        id: `election-${Date.now()}`,
+        name: `Election Ended ${format(new Date(), 'PPpp')}`,
+        startDate: votingStartDate.toISOString(),
+        endDate: votingEndDate.toISOString(),
+        results: JSON.parse(JSON.stringify(candidates)), // Deep copy
+        totalVotes: totalVotes,
+    };
+
+    setElectionHistory(prev => [newElection, ...prev]);
+
+    // Reset votes for the next election
+    setCandidates(prev => prev.map(c => ({...c, votes: 0})));
+    // Reset users' voted status
+    setUsers(prev => prev.map(u => ({...u, hasVoted: false})));
+
+    toast({
+        title: "Election Archived",
+        description: "The current election results have been saved to history and votes have been reset."
+    });
+  };
+
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate }}>
+    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection }}>
       {!loading && children}
     </AuthContext.Provider>
   );

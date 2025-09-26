@@ -12,7 +12,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Menu, Users, BarChart2, LogOut, MessageSquare } from 'lucide-react';
+import { Menu, Users, BarChart2, LogOut, MessageSquare, History } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -28,6 +28,7 @@ function AdminSidebarNav() {
     { href: '/admin/candidates', icon: Users, label: 'Candidates' },
     { href: '/admin/results', icon: BarChart2, label: 'Results' },
     { href: '/admin/messages', icon: MessageSquare, label: 'Messages' },
+    { href: '/admin/history', icon: History, label: 'History' },
   ];
 
   return (
@@ -100,7 +101,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col p-0">
                <SheetHeader className="p-4 border-b">
-                <SheetTitle className="sr-only">Site Navigation</SheetTitle>
+                <SheetTitle>Site Navigation</SheetTitle>
               </SheetHeader>
               <AdminSidebarNav />
             </SheetContent>

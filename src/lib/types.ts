@@ -1,3 +1,4 @@
+
 export type CandidatePosition = 'President' | 'Vice-President' | 'Secretary';
 
 export type Candidate = {
@@ -17,7 +18,7 @@ export type User = {
 };
 
 export type Admin = {
-  id: string; // username
+  id:string; // username
   name: string;
   type: 'admin';
   password?: string;
@@ -26,4 +27,13 @@ export type Admin = {
 export type AuthUser = {
     id: string;
     name: string;
+}
+
+export type Election = {
+    id: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+    results: Candidate[];
+    totalVotes: number;
 }
