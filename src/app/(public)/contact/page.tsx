@@ -21,14 +21,14 @@ export default function ContactPage() {
         <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
                 <Mail className="h-5 w-5 text-muted-foreground" />
-                <a href="mailto:your-email@example.com" className="text-primary hover:underline">
-                    your-email@example.com
+                <a href="mailto:kaushikmaurya8355@gmail.com" className="text-primary hover:underline">
+                    kaushikmaurya8355@gmail.com
                 </a>
             </div>
             <div className="flex items-center gap-4">
                 <Phone className="h-5 w-5 text-muted-foreground" />
-                <a href="tel:+911234567890" className="text-primary hover:underline">
-                    +91 12345 67890
+                <a href="tel:9555512182" className="text-primary hover:underline">
+                    9555512182
                 </a>
             </div>
         </CardContent>
