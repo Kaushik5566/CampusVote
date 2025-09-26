@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [resultsPublished, setResultsPublished] = useState<boolean>(false);
   const [votingStartDate, setVotingStartDate] = useState<Date>(() => {
     const d = new Date();
-    d.setDate(d.getDate() - 1);
+    d.setDate(d.getDate() - 1); // Set to yesterday by default
     return d;
   });
   const [votingEndDate, setVotingEndDate] = useState<Date>(() => {
@@ -67,11 +67,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [admins, setAdmins] = useState<Admin[]>(mockAdmins);
   const [electionHistory, setElectionHistory] = useState<Election[]>([]);
   
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
     try {
         const storedUser = sessionStorage.getItem('user');
         if (storedUser) setUser(JSON.parse(storedUser, dateReviver));
@@ -100,46 +105,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
         console.error("Failed to load state from sessionStorage", error);
     }
-    setIsLoaded(true);
-  }, []);
+  }, [isClient]);
 
   useEffect(() => {
-    if (isLoaded) {
+    if (isClient) {
         if (user) {
             sessionStorage.setItem('user', JSON.stringify(user));
         } else {
             sessionStorage.removeItem('user');
         }
     }
-  }, [user, isLoaded]);
+  }, [user, isClient]);
 
   useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('candidates', JSON.stringify(candidates));
-  }, [candidates, isLoaded]);
+    if (isClient) sessionStorage.setItem('candidates', JSON.stringify(candidates));
+  }, [candidates, isClient]);
 
   useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('resultsPublished', JSON.stringify(resultsPublished));
-  }, [resultsPublished, isLoaded]);
+    if (isClient) sessionStorage.setItem('resultsPublished', JSON.stringify(resultsPublished));
+  }, [resultsPublished, isClient]);
 
   useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('votingStartDate', JSON.stringify(votingStartDate));
-  }, [votingStartDate, isLoaded]);
+    if (isClient) sessionStorage.setItem('votingStartDate', JSON.stringify(votingStartDate));
+  }, [votingStartDate, isClient]);
 
   useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('votingEndDate', JSON.stringify(votingEndDate));
-  }, [votingEndDate, isLoaded]);
+    if (isClient) sessionStorage.setItem('votingEndDate', JSON.stringify(votingEndDate));
+  }, [votingEndDate, isClient]);
 
   useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('users', JSON.stringify(users));
-  }, [users, isLoaded]);
+    if (isClient) sessionStorage.setItem('users', JSON.stringify(users));
+  }, [users, isClient]);
 
   useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('admins', JSON.stringify(admins));
-  }, [admins, isLoaded]);
+    if (isClient) sessionStorage.setItem('admins', JSON.stringify(admins));
+  }, [admins, isClient]);
     
   useEffect(() => {
-    if (isLoaded) sessionStorage.setItem('electionHistory', JSON.stringify(electionHistory));
-  }, [electionHistory, isLoaded]);
+    if (isClient) sessionStorage.setItem('electionHistory', JSON.stringify(electionHistory));
+  }, [electionHistory, isClient]);
 
 
   const login = (id: string, pass: string, userType: 'student' | 'admin'): boolean => {
@@ -350,9 +354,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
 
+  if (!isClient) {
+    return <div className="flex h-screen w-full items-center justify-center"><p>Loading...</p></div>;
+  }
+
   return (
     <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection, updateStudentDetails, findStudentByEmail, verifySecurityAnswer, resetStudentPassword, admins, addAdmin, deleteAdmin }}>
-      {isLoaded ? children : <div className="flex h-screen w-full items-center justify-center"><p>Loading...</p></div>}
+      {children}
     </AuthContext.Provider>
   );
 }
