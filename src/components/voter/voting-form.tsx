@@ -12,11 +12,12 @@ import { CandidateCard } from './candidate-card';
 import { positions } from '@/lib/data';
 import type { Candidate } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Clock, Lock } from 'lucide-react';
 import Link from 'next/link';
+import { format } from 'date-fns';
 
 export function VotingForm() {
-  const { candidates, submitVote, user } = useAuth();
+  const { candidates, submitVote, user, votingStartDate, votingEndDate } = useAuth();
 
   const schemaObject = positions.reduce((acc, position) => {
     acc[position] = z.string({ required_error: `You must select a candidate for ${position}.` });
@@ -32,7 +33,46 @@ export function VotingForm() {
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     submitVote(data);
   };
+
+  const now = new Date();
+  const hasVotingStarted = now >= votingStartDate;
+  const hasVotingEnded = now > votingEndDate;
+
+  if (hasVotingEnded) {
+    return (
+        <Card className="w-full max-w-2xl mx-auto my-12 text-center">
+            <CardHeader>
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                    <Lock className="h-10 w-10 text-muted-foreground" />
+                </div>
+                <CardTitle className="mt-4 text-2xl font-bold">Voting Has Closed</CardTitle>
+                <CardDescription>The voting period for this election has ended. Thank you for your interest.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button asChild>
+                    <Link href="/results">View Final Results</Link>
+                </Button>
+            </CardContent>
+        </Card>
+    );
+  }
   
+  if (!hasVotingStarted) {
+    return (
+        <Card className="w-full max-w-2xl mx-auto my-12 text-center">
+            <CardHeader>
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                    <Clock className="h-10 w-10 text-muted-foreground" />
+                </div>
+                <CardTitle className="mt-4 text-2xl font-bold">Voting Has Not Started Yet</CardTitle>
+                <CardDescription>
+                    The voting period will open on <span className="font-semibold">{format(votingStartDate, "MMMM d, yyyy 'at' h:mm a")}</span>.
+                </CardDescription>
+            </CardHeader>
+        </Card>
+    );
+  }
+
   if (user?.type === 'student' && user.hasVoted) {
     return (
       <Card className="w-full max-w-2xl mx-auto my-12 text-center">

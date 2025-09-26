@@ -5,6 +5,7 @@ import { ResultsAnalysis } from '@/components/admin/results-analysis';
 import { ResultsChart } from '@/components/results/results-chart';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { VotingPeriodSettings } from '@/components/admin/voting-period-settings';
 
 export default function AdminResultsPage() {
   const { candidates } = useAuth();
@@ -39,12 +40,14 @@ export default function AdminResultsPage() {
                     </Table>
                 </CardContent>
             </Card>
-            <div className="block lg:hidden">
+            <div className="block lg:hidden space-y-6">
+              <VotingPeriodSettings />
               <ResultsAnalysis />
             </div>
             <ResultsChart data={sortedCandidates}/>
         </div>
-        <div className="lg:col-span-3 hidden lg:block">
+        <div className="lg:col-span-3 hidden lg:block space-y-6">
+            <VotingPeriodSettings />
             <ResultsAnalysis />
         </div>
     </div>

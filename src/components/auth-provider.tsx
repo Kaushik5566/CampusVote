@@ -18,6 +18,10 @@ type AuthContextType = {
   deleteCandidate: (candidateId: string) => void;
   resultsPublished: boolean;
   setResultsPublished: (published: boolean) => void;
+  votingStartDate: Date;
+  votingEndDate: Date;
+  setVotingStartDate: (date: Date) => void;
+  setVotingEndDate: (date: Date) => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -26,6 +30,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | Admin | null>(null);
   const [candidates, setCandidates] = useState<Candidate[]>(mockCandidates);
   const [resultsPublished, setResultsPublished] = useState(false);
+  const [votingStartDate, setVotingStartDate] = useState(() => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    return date;
+  });
+  const [votingEndDate, setVotingEndDate] = useState(() => {
+    const date = new Date();
+    date.setDate(date.getDate() + 7);
+    date.setHours(23, 59, 59, 999);
+    return date;
+  });
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [admins, setAdmins] = useState<Admin[]>(mockAdmins);
@@ -40,6 +55,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const storedResults = sessionStorage.getItem('resultsPublished');
       const storedUsers = sessionStorage.getItem('users');
       const storedAdmins = sessionStorage.getItem('admins');
+      const storedVotingStartDate = sessionStorage.getItem('votingStartDate');
+      const storedVotingEndDate = sessionStorage.getItem('votingEndDate');
+
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
@@ -54,6 +72,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       if (storedAdmins) {
         setAdmins(JSON.parse(storedAdmins));
+      }
+      if (storedVotingStartDate) {
+        setVotingStartDate(new Date(JSON.parse(storedVotingStartDate)));
+      }
+      if (storedVotingEndDate) {
+        setVotingEndDate(new Date(JSON.parse(storedVotingEndDate)));
       }
 
     } catch (error) {
@@ -81,6 +105,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (loading) return;
     sessionStorage.setItem('resultsPublished', JSON.stringify(resultsPublished));
   }, [resultsPublished, loading]);
+
+  useEffect(() => {
+    if (loading) return;
+    sessionStorage.setItem('votingStartDate', JSON.stringify(votingStartDate));
+  }, [votingStartDate, loading]);
+
+  useEffect(() => {
+    if (loading) return;
+    sessionStorage.setItem('votingEndDate', JSON.stringify(votingEndDate));
+  }, [votingEndDate, loading]);
 
   useEffect(() => {
     if (loading) return;
@@ -207,7 +241,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished }}>
+    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate }}>
       {!loading && children}
     </AuthContext.Provider>
   );
