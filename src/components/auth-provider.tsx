@@ -53,7 +53,7 @@ const loadState = <T,>(key: string, defaultValue: T, reviver?: (key: any, value:
 };
 
 const dateReviver = (key: string, value: any) => {
-    if (key === 'dob' || key === 'votingStartDate' || key === 'votingEndDate') {
+    if (key === 'dob' || key === 'votingStartDate' || key === 'votingEndDate' || key === 'startDate' || key === 'endDate') {
         if(value) return new Date(value);
     }
     return value;
@@ -64,7 +64,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | Admin | null>(() => loadState<User | Admin | null>('user', null, dateReviver));
   const [candidates, setCandidates] = useState<Candidate[]>(() => loadState<Candidate[]>('candidates', mockCandidates));
   const [resultsPublished, setResultsPublished] = useState<boolean>(() => loadState<boolean>('resultsPublished', false));
-  const [votingStartDate, setVotingStartDate] = useState<Date>(() => loadState<Date>('votingStartDate', new Date(), dateReviver));
+  const [votingStartDate, setVotingStartDate] = useState<Date>(() => {
+    const defaultStartDate = new Date();
+    defaultStartDate.setDate(defaultStartDate.getDate() - 1); // Set to yesterday
+    return loadState<Date>('votingStartDate', defaultStartDate, dateReviver);
+  });
   const [votingEndDate, setVotingEndDate] = useState<Date>(() => {
     const defaultEndDate = new Date();
     defaultEndDate.setDate(defaultEndDate.getDate() + 7);
@@ -72,8 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
   const [users, setUsers] = useState<User[]>(() => loadState<User[]>('users', mockUsers, dateReviver));
   const [admins, setAdmins] = useState<Admin[]>(() => loadState<Admin[]>('admins', mockAdmins));
-  const [electionHistory, setElectionHistory] = useState<Election[]>(() => loadState<Election[]>('electionHistory', []));
-  const [loading, setLoading] = useState(false); // No longer need initial loading state for session storage
+  const [electionHistory, setElectionHistory] = useState<Election[]>(() => loadState<Election[]>('electionHistory', [], dateReviver));
   
   const router = useRouter();
   const pathname = usePathname();
@@ -324,7 +327,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection, updateStudentDetails, findStudentByEmail, verifySecurityAnswer, resetStudentPassword, admins, addAdmin, deleteAdmin }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }
@@ -336,5 +339,3 @@ export function useAuth() {
   }
   return context;
 }
-
-    
