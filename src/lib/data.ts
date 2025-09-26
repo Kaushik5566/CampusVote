@@ -1,9 +1,10 @@
+
 import type { User, Admin, Candidate, CandidatePosition } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
 export const mockUsers: User[] = [
-  { id: 'student1@college.edu', name: 'John Doe', type: 'student', hasVoted: false },
-  { id: 'student2@college.edu', name: 'Jane Smith', type: 'student', hasVoted: true },
+  { id: 'student1@college.edu', name: 'John Doe', collegeName: 'State University', type: 'student', hasVoted: false },
+  { id: 'student2@college.edu', name: 'Jane Smith', collegeName: 'City College', type: 'student', hasVoted: true },
 ];
 
 export const mockAdmins: Admin[] = [
@@ -65,3 +66,5 @@ export const mockCandidates: Candidate[] = [
 ];
 
 export const positions: CandidatePosition[] = ['President', 'Vice-President', 'Secretary'];
+
+    

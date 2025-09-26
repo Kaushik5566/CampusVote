@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -16,6 +17,7 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
+  collegeName: z.string().min(2, { message: 'College name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
@@ -29,6 +31,7 @@ export default function StudentRegisterPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
+      collegeName: '',
       email: '',
       password: '',
     },
@@ -36,7 +39,7 @@ export default function StudentRegisterPage() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    const success = register({id: values.email, name: values.name}, 'student');
+    const success = register({id: values.email, name: values.name, collegeName: values.collegeName }, 'student');
     if (!success) {
       setIsLoading(false);
     }
@@ -63,6 +66,19 @@ export default function StudentRegisterPage() {
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
                       <Input placeholder="John Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="collegeName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>College Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Your College University" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -125,3 +141,5 @@ export default function StudentRegisterPage() {
     </div>
   );
 }
+
+    

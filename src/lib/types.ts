@@ -13,6 +13,7 @@ export type Candidate = {
 export type User = {
   id: string; // email or college ID
   name: string;
+  collegeName: string;
   type: 'student';
   hasVoted: boolean;
 };
@@ -27,6 +28,7 @@ export type Admin = {
 export type AuthUser = {
     id: string;
     name: string;
+    collegeName?: string;
 }
 
 export type Election = {
@@ -37,3 +39,5 @@ export type Election = {
     results: Candidate[];
     totalVotes: number;
 }
+
+    

@@ -184,7 +184,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         return false;
       }
-      const newStudent: User = { ...newUser, type: 'student', hasVoted: false };
+      const newStudent: User = { ...newUser, collegeName: newUser.collegeName || 'N/A', type: 'student', hasVoted: false };
       setUsers(prev => [...prev, newStudent]);
       setUser(newStudent);
       router.push('/dashboard');
@@ -301,3 +301,5 @@ export function useAuth() {
   }
   return context;
 }
+
+    
