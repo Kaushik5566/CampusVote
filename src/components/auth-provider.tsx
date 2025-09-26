@@ -37,121 +37,83 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// Helper function to load state from sessionStorage
+const loadState = <T,>(key: string, defaultValue: T, reviver?: (key: any, value: any) => any): T => {
+    if (typeof window === 'undefined') return defaultValue;
+    try {
+        const storedValue = sessionStorage.getItem(key);
+        if (storedValue) {
+            return JSON.parse(storedValue, reviver);
+        }
+    } catch (error) {
+        console.error(`Failed to parse ${key} from sessionStorage`, error);
+        sessionStorage.removeItem(key);
+    }
+    return defaultValue;
+};
+
+const dateReviver = (key: string, value: any) => {
+    if (key === 'dob' || key === 'votingStartDate' || key === 'votingEndDate') {
+        if(value) return new Date(value);
+    }
+    return value;
+};
+
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | Admin | null>(null);
-  const [candidates, setCandidates] = useState<Candidate[]>(mockCandidates);
-  const [resultsPublished, setResultsPublished] = useState(false);
-  const [votingStartDate, setVotingStartDate] = useState(() => {
-    const date = new Date();
-    date.setHours(0, 0, 0, 0);
-    return date;
+  const [user, setUser] = useState<User | Admin | null>(() => loadState<User | Admin | null>('user', null, dateReviver));
+  const [candidates, setCandidates] = useState<Candidate[]>(() => loadState<Candidate[]>('candidates', mockCandidates));
+  const [resultsPublished, setResultsPublished] = useState<boolean>(() => loadState<boolean>('resultsPublished', false));
+  const [votingStartDate, setVotingStartDate] = useState<Date>(() => loadState<Date>('votingStartDate', new Date(), dateReviver));
+  const [votingEndDate, setVotingEndDate] = useState<Date>(() => {
+    const defaultEndDate = new Date();
+    defaultEndDate.setDate(defaultEndDate.getDate() + 7);
+    return loadState<Date>('votingEndDate', defaultEndDate, dateReviver);
   });
-  const [votingEndDate, setVotingEndDate] = useState(() => {
-    const date = new Date();
-    date.setDate(date.getDate() + 7);
-    date.setHours(23, 59, 59, 999);
-    return date;
-  });
-  const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState<User[]>(mockUsers);
-  const [admins, setAdmins] = useState<Admin[]>(mockAdmins);
-  const [electionHistory, setElectionHistory] = useState<Election[]>([]);
+  const [users, setUsers] = useState<User[]>(() => loadState<User[]>('users', mockUsers, dateReviver));
+  const [admins, setAdmins] = useState<Admin[]>(() => loadState<Admin[]>('admins', mockAdmins));
+  const [electionHistory, setElectionHistory] = useState<Election[]>(() => loadState<Election[]>('electionHistory', []));
+  const [loading, setLoading] = useState(false); // No longer need initial loading state for session storage
+  
   const router = useRouter();
   const pathname = usePathname();
   const { toast } = useToast();
 
   useEffect(() => {
-    try {
-      const storedUser = sessionStorage.getItem('user');
-      const storedCandidates = sessionStorage.getItem('candidates');
-      const storedResults = sessionStorage.getItem('resultsPublished');
-      const storedUsers = sessionStorage.getItem('users');
-      const storedAdmins = sessionStorage.getItem('admins');
-      const storedVotingStartDate = sessionStorage.getItem('votingStartDate');
-      const storedVotingEndDate = sessionStorage.getItem('votingEndDate');
-      const storedElectionHistory = sessionStorage.getItem('electionHistory');
-
-      if (storedUser) {
-        setUser(JSON.parse(storedUser, (key, value) => {
-          if (key === 'dob') return new Date(value);
-          return value;
-        }));
-      }
-      if (storedCandidates) {
-        setCandidates(JSON.parse(storedCandidates));
-      }
-      if (storedResults) {
-        setResultsPublished(JSON.parse(storedResults));
-      }
-      if (storedUsers) {
-        setUsers(JSON.parse(storedUsers, (key, value) => {
-          if (key === 'dob') return new Date(value);
-          return value;
-        }));
-      }
-      if (storedAdmins) {
-        setAdmins(JSON.parse(storedAdmins));
-      }
-      if (storedVotingStartDate) {
-        setVotingStartDate(new Date(JSON.parse(storedVotingStartDate)));
-      }
-      if (storedVotingEndDate) {
-        setVotingEndDate(new Date(JSON.parse(storedVotingEndDate)));
-      }
-      if (storedElectionHistory) {
-        setElectionHistory(JSON.parse(storedElectionHistory));
-      }
-
-    } catch (error) {
-      console.error("Failed to parse from sessionStorage", error);
-      sessionStorage.clear();
-    }
-    setLoading(false);
-  }, []);
-  
-  useEffect(() => {
-    if (loading) return;
     if (user) {
       sessionStorage.setItem('user', JSON.stringify(user));
     } else {
       sessionStorage.removeItem('user');
     }
-  }, [user, loading]);
+  }, [user]);
 
   useEffect(() => {
-    if (loading) return;
     sessionStorage.setItem('candidates', JSON.stringify(candidates));
-  }, [candidates, loading]);
+  }, [candidates]);
 
   useEffect(() => {
-    if (loading) return;
     sessionStorage.setItem('resultsPublished', JSON.stringify(resultsPublished));
-  }, [resultsPublished, loading]);
+  }, [resultsPublished]);
 
   useEffect(() => {
-    if (loading) return;
     sessionStorage.setItem('votingStartDate', JSON.stringify(votingStartDate));
-  }, [votingStartDate, loading]);
+  }, [votingStartDate]);
 
   useEffect(() => {
-    if (loading) return;
     sessionStorage.setItem('votingEndDate', JSON.stringify(votingEndDate));
-  }, [votingEndDate, loading]);
+  }, [votingEndDate]);
 
   useEffect(() => {
-    if (loading) return;
     sessionStorage.setItem('users', JSON.stringify(users));
-  }, [users, loading]);
+  }, [users]);
 
     useEffect(() => {
-    if (loading) return;
     sessionStorage.setItem('admins', JSON.stringify(admins));
-    }, [admins, loading]);
+    }, [admins]);
     
     useEffect(() => {
-        if (loading) return;
         sessionStorage.setItem('electionHistory', JSON.stringify(electionHistory));
-    }, [electionHistory, loading]);
+    }, [electionHistory]);
 
 
   const login = (id: string, pass: string, userType: 'student' | 'admin'): boolean => {
@@ -374,3 +336,5 @@ export function useAuth() {
   }
   return context;
 }
+
+    
