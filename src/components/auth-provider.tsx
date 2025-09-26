@@ -48,94 +48,98 @@ const dateReviver = (key: string, value: any) => {
     return value;
 };
 
-const getInitialState = <T,>(key: string, defaultValue: T): T => {
-    if (typeof window === 'undefined') {
-        return defaultValue;
-    }
-    try {
-        const item = window.sessionStorage.getItem(key);
-        return item ? JSON.parse(item, dateReviver) : defaultValue;
-    } catch (error) {
-        console.error(`Error reading from sessionStorage for key "${key}":`, error);
-        return defaultValue;
-    }
-};
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | Admin | null>(() => getInitialState<User | Admin | null>('user', null));
-  const [candidates, setCandidates] = useState<Candidate[]>(() => getInitialState<Candidate[]>('candidates', mockCandidates));
-  const [resultsPublished, setResultsPublished] = useState<boolean>(() => getInitialState<boolean>('resultsPublished', false));
-  
+  const [user, setUser] = useState<User | Admin | null>(null);
+  const [candidates, setCandidates] = useState<Candidate[]>(mockCandidates);
+  const [resultsPublished, setResultsPublished] = useState<boolean>(false);
   const [votingStartDate, setVotingStartDate] = useState<Date>(() => {
-    const defaultStartDate = new Date();
-    defaultStartDate.setDate(defaultStartDate.getDate() - 1);
-    return getInitialState<Date>('votingStartDate', defaultStartDate);
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    return d;
   });
-  
   const [votingEndDate, setVotingEndDate] = useState<Date>(() => {
-      const defaultEndDate = new Date();
-      defaultEndDate.setDate(defaultEndDate.getDate() + 7);
-      return getInitialState<Date>('votingEndDate', defaultEndDate);
+    const d = new Date();
+    d.setDate(d.getDate() + 7);
+    return d;
   });
-
-  const [users, setUsers] = useState<User[]>(() => getInitialState<User[]>('users', mockUsers));
-  const [admins, setAdmins] = useState<Admin[]>(() => getInitialState<Admin[]>('admins', mockAdmins));
-  const [electionHistory, setElectionHistory] = useState<Election[]>(() => getInitialState<Election[]>('electionHistory', []));
+  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [admins, setAdmins] = useState<Admin[]>(mockAdmins);
+  const [electionHistory, setElectionHistory] = useState<Election[]>([]);
   
+  const [isLoaded, setIsLoaded] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    try {
+        const storedUser = sessionStorage.getItem('user');
+        if (storedUser) setUser(JSON.parse(storedUser, dateReviver));
+
+        const storedCandidates = sessionStorage.getItem('candidates');
+        if (storedCandidates) setCandidates(JSON.parse(storedCandidates, dateReviver));
+        
+        const storedResultsPublished = sessionStorage.getItem('resultsPublished');
+        if (storedResultsPublished) setResultsPublished(JSON.parse(storedResultsPublished));
+        
+        const storedVotingStartDate = sessionStorage.getItem('votingStartDate');
+        if (storedVotingStartDate) setVotingStartDate(new Date(JSON.parse(storedVotingStartDate)));
+
+        const storedVotingEndDate = sessionStorage.getItem('votingEndDate');
+        if (storedVotingEndDate) setVotingEndDate(new Date(JSON.parse(storedVotingEndDate)));
+
+        const storedUsers = sessionStorage.getItem('users');
+        if (storedUsers) setUsers(JSON.parse(storedUsers, dateReviver));
+
+        const storedAdmins = sessionStorage.getItem('admins');
+        if (storedAdmins) setAdmins(JSON.parse(storedAdmins, dateReviver));
+
+        const storedElectionHistory = sessionStorage.getItem('electionHistory');
+        if (storedElectionHistory) setElectionHistory(JSON.parse(storedElectionHistory, dateReviver));
+
+    } catch (error) {
+        console.error("Failed to load state from sessionStorage", error);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
         if (user) {
             sessionStorage.setItem('user', JSON.stringify(user));
         } else {
             sessionStorage.removeItem('user');
         }
     }
-  }, [user]);
+  }, [user, isLoaded]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-        sessionStorage.setItem('candidates', JSON.stringify(candidates));
-    }
-  }, [candidates]);
+    if (isLoaded) sessionStorage.setItem('candidates', JSON.stringify(candidates));
+  }, [candidates, isLoaded]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-        sessionStorage.setItem('resultsPublished', JSON.stringify(resultsPublished));
-    }
-  }, [resultsPublished]);
+    if (isLoaded) sessionStorage.setItem('resultsPublished', JSON.stringify(resultsPublished));
+  }, [resultsPublished, isLoaded]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-        sessionStorage.setItem('votingStartDate', JSON.stringify(votingStartDate));
-    }
-  }, [votingStartDate]);
+    if (isLoaded) sessionStorage.setItem('votingStartDate', JSON.stringify(votingStartDate));
+  }, [votingStartDate, isLoaded]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-        sessionStorage.setItem('votingEndDate', JSON.stringify(votingEndDate));
-    }
-  }, [votingEndDate]);
+    if (isLoaded) sessionStorage.setItem('votingEndDate', JSON.stringify(votingEndDate));
+  }, [votingEndDate, isLoaded]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-        sessionStorage.setItem('users', JSON.stringify(users));
-    }
-  }, [users]);
+    if (isLoaded) sessionStorage.setItem('users', JSON.stringify(users));
+  }, [users, isLoaded]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-        sessionStorage.setItem('admins', JSON.stringify(admins));
-    }
-  }, [admins]);
+    if (isLoaded) sessionStorage.setItem('admins', JSON.stringify(admins));
+  }, [admins, isLoaded]);
     
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-        sessionStorage.setItem('electionHistory', JSON.stringify(electionHistory));
-    }
-  }, [electionHistory]);
+    if (isLoaded) sessionStorage.setItem('electionHistory', JSON.stringify(electionHistory));
+  }, [electionHistory, isLoaded]);
 
 
   const login = (id: string, pass: string, userType: 'student' | 'admin'): boolean => {
@@ -348,7 +352,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection, updateStudentDetails, findStudentByEmail, verifySecurityAnswer, resetStudentPassword, admins, addAdmin, deleteAdmin }}>
-      {children}
+      {isLoaded ? children : <div className="flex h-screen w-full items-center justify-center"><p>Loading...</p></div>}
     </AuthContext.Provider>
   );
 }
@@ -360,3 +364,5 @@ export function useAuth() {
   }
   return context;
 }
+
+    
