@@ -19,24 +19,11 @@ import { courses, years } from '@/lib/data';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  dob_day: z.coerce.number().min(1, 'Day is required').max(31, 'Invalid day'),
-  dob_month: z.coerce.number().min(1, 'Month is required').max(12, 'Invalid month'),
-  dob_year: z.coerce.number().min(1900, 'Invalid year').max(new Date().getFullYear(), 'Invalid year'),
   collegeName: z.string().min(2, { message: 'College name must be at least 2 characters.' }),
   course: z.string({ required_error: 'Please select a course.' }),
   year: z.string().optional(),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
-}).refine(data => {
-    try {
-        const date = new Date(data.dob_year, data.dob_month - 1, data.dob_day);
-        return date.getFullYear() === data.dob_year && date.getMonth() === data.dob_month - 1 && date.getDate() === data.dob_day;
-    } catch {
-        return false;
-    }
-}, {
-    message: 'Invalid date. Please check day, month, and year.',
-    path: ['dob_day'], 
 });
 
 const coursesRequiringYear = ['BSC-IT', 'BSC-DS', 'BBI', 'BAF', 'BCOM', 'BMS'];
@@ -61,12 +48,10 @@ export default function StudentRegisterPage() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    const dob = new Date(values.dob_year, values.dob_month - 1, values.dob_day);
 
     const success = register({
         id: values.email, 
-        name: values.name, 
-        dob: dob,
+        name: values.name,
         collegeName: values.collegeName,
         course: values.course,
         year: values.year as 'FY' | 'SY' | 'TY' | undefined,
@@ -102,45 +87,6 @@ export default function StudentRegisterPage() {
                   </FormItem>
                 )}
               />
-               <FormItem>
-                    <FormLabel>Date of birth</FormLabel>
-                    <div className="grid grid-cols-3 gap-3">
-                         <FormField
-                            control={form.control}
-                            name="dob_day"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                <Input placeholder="Day" type="number" {...field} />
-                                </FormControl>
-                            </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="dob_month"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                <Input placeholder="Month" type="number" {...field} />
-                                </FormControl>
-                            </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="dob_year"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                <Input placeholder="Year" type="number" {...field} />
-                                </FormControl>
-                            </FormItem>
-                            )}
-                        />
-                    </div>
-                    <FormMessage>{form.formState.errors.dob_day?.message}</FormMessage>
-                </FormItem>
               <FormField
                 control={form.control}
                 name="collegeName"
