@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -136,7 +135,7 @@ export default function StudentRegisterPage() {
                 name="rollNo"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Roll No.</FormLabel>
+                    <FormLabel>Sem &amp; Roll No</FormLabel>
                     <FormControl>
                       <Input placeholder="Sem-Roll_No" {...field} />
                     </FormControl>

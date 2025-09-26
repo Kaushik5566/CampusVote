@@ -1,4 +1,3 @@
-
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -119,7 +118,7 @@ export function StudentProfileForm({ student, children }: StudentProfileFormProp
               name="rollNo"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Roll No.</FormLabel>
+                  <FormLabel>Sem &amp; Roll No</FormLabel>
                   <FormControl>
                     <Input placeholder="Sem-Roll_No" {...field} />
                   </FormControl>
