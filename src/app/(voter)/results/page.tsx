@@ -8,6 +8,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Lock, Trophy } from 'lucide-react';
 import { positions } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
+import { WinnersDisplay } from '@/components/results/winners-display';
+import type { Candidate } from '@/lib/types';
+
 
 export default function ResultsPage() {
   const { candidates, resultsPublished } = useAuth();
@@ -35,11 +38,11 @@ export default function ResultsPage() {
     if (positionCandidates.length > 0) {
       const winner = positionCandidates.reduce((prev, current) => (prev.votes > current.votes) ? prev : current);
       if(winner.votes > 0) {
-        acc[position] = winner.id;
+        acc[position] = winner;
       }
     }
     return acc;
-  }, {} as Record<string, string>);
+  }, {} as Record<string, Candidate>);
 
 
   return (
@@ -49,10 +52,11 @@ export default function ResultsPage() {
           Election Results
         </h1>
         <p className="mt-3 max-w-2xl mx-auto text-lg text-muted-foreground">
-          Official vote counts for all candidates.
+          Official vote counts and winners for all positions.
         </p>
       </div>
       <div className="space-y-8">
+        <WinnersDisplay winners={Object.values(winners)} />
         <ResultsChart data={sortedCandidates} />
         <Card>
           <CardHeader>
@@ -71,11 +75,11 @@ export default function ResultsPage() {
               </TableHeader>
               <TableBody>
                 {sortedCandidates.map((candidate, index) => (
-                  <TableRow key={candidate.id} className={winners[candidate.position] === candidate.id ? 'bg-green-50 dark:bg-green-900/30' : ''}>
+                  <TableRow key={candidate.id} className={winners[candidate.position]?.id === candidate.id ? 'bg-green-50 dark:bg-green-900/30' : ''}>
                     <TableCell className="font-medium">{index + 1}</TableCell>
                     <TableCell className="font-medium flex items-center gap-2">
                       {candidate.name}
-                      {winners[candidate.position] === candidate.id && (
+                      {winners[candidate.position]?.id === candidate.id && (
                           <Badge variant="default" className="bg-yellow-500 hover:bg-yellow-600 text-white">
                               <Trophy className="h-3 w-3 mr-1" />
                               Winner

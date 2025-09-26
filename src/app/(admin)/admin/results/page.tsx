@@ -11,6 +11,7 @@ import { ArchiveElection } from '@/components/admin/archive-election';
 import { positions } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { Trophy } from 'lucide-react';
+import { WinnersDisplay } from '@/components/results/winners-display';
 
 export default function AdminResultsPage() {
   const { candidates } = useAuth();
@@ -25,15 +26,24 @@ export default function AdminResultsPage() {
     if (positionCandidates.length > 0) {
       const winner = positionCandidates.reduce((prev, current) => (prev.votes > current.votes) ? prev : current);
       if(winner.votes > 0) {
-        acc[position] = winner.id;
+        acc[position] = winner;
       }
     }
     return acc;
-  }, {} as Record<string, string>);
+  }, {} as Record<string, any>);
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <div className="lg:col-span-4 space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Winners</CardTitle>
+                    <CardDescription>The candidate with the most votes for each position.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <WinnersDisplay winners={Object.values(winners)} />
+                </CardContent>
+            </Card>
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -53,10 +63,10 @@ export default function AdminResultsPage() {
                         </TableHeader>
                         <TableBody>
                             {sortedCandidates.map((candidate) => (
-                                <TableRow key={candidate.id} className={winners[candidate.position] === candidate.id ? 'bg-green-50 dark:bg-green-900/30' : ''}>
+                                <TableRow key={candidate.id} className={winners[candidate.position]?.id === candidate.id ? 'bg-green-50 dark:bg-green-900/30' : ''}>
                                     <TableCell className="font-medium flex items-center gap-2">
                                         {candidate.name}
-                                        {winners[candidate.position] === candidate.id && (
+                                        {winners[candidate.position]?.id === candidate.id && (
                                             <Badge variant="default" className="bg-yellow-500 hover:bg-yellow-600 text-white">
                                                 <Trophy className="h-3 w-3 mr-1" />
                                                 Winner
