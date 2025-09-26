@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { format, parse } from 'date-fns';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,22 +14,29 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/components/auth-provider';
 import { Logo } from '@/components/logo';
-import { CalendarIcon, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { courses, years } from '@/lib/data';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  dob: z.date({
-    required_error: 'A date of birth is required.',
-  }),
+  dob_day: z.coerce.number().min(1, 'Day is required').max(31, 'Invalid day'),
+  dob_month: z.coerce.number().min(1, 'Month is required').max(12, 'Invalid month'),
+  dob_year: z.coerce.number().min(1900, 'Invalid year').max(new Date().getFullYear(), 'Invalid year'),
   collegeName: z.string().min(2, { message: 'College name must be at least 2 characters.' }),
   course: z.string({ required_error: 'Please select a course.' }),
   year: z.string().optional(),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
+}).refine(data => {
+    try {
+        const date = new Date(data.dob_year, data.dob_month - 1, data.dob_day);
+        return date.getFullYear() === data.dob_year && date.getMonth() === data.dob_month - 1 && date.getDate() === data.dob_day;
+    } catch {
+        return false;
+    }
+}, {
+    message: 'Invalid date. Please check day, month, and year.',
+    path: ['dob_day'], // Report error on the first field
 });
 
 const coursesRequiringYear = ['BSC-IT', 'BSC-DS', 'BBI', 'BAF', 'BCOM', 'BMS'];
@@ -55,10 +61,12 @@ export default function StudentRegisterPage() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
+    const dob = new Date(values.dob_year, values.dob_month - 1, values.dob_day);
+
     const success = register({
         id: values.email, 
         name: values.name, 
-        dob: values.dob,
+        dob: dob,
         collegeName: values.collegeName,
         course: values.course,
         year: values.year as 'FY' | 'SY' | 'TY' | undefined,
@@ -94,54 +102,45 @@ export default function StudentRegisterPage() {
                   </FormItem>
                 )}
               />
-               <FormField
-                control={form.control}
-                name="dob"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
+               <FormItem>
                     <FormLabel>Date of birth</FormLabel>
-                    <Popover>
-                      <div className="relative flex items-center">
-                          <FormControl>
-                                <Input
-                                placeholder="MM/DD/YYYY"
-                                value={field.value ? format(field.value, 'MM/dd/yyyy') : ''}
-                                onChange={(e) => {
-                                    const date = parse(e.target.value, 'MM/dd/yyyy', new Date());
-                                    if (!isNaN(date.getTime())) {
-                                        field.onChange(date);
-                                    } else {
-                                        // Allow clearing the field or handle invalid input
-                                        field.onChange(undefined);
-                                    }
-                                }}
-                                />
-                          </FormControl>
-                          <PopoverTrigger asChild>
-                                <Button variant="ghost" className="absolute right-0 h-full px-3" aria-label="Open calendar">
-                                    <CalendarIcon className="h-4 w-4 opacity-50" />
-                                </Button>
-                          </PopoverTrigger>
-                      </div>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date('1900-01-01')
-                          }
-                          initialFocus
-                          captionLayout="dropdown-nav"
-                          fromYear={1950}
-                          toYear={new Date().getFullYear()}
+                    <div className="grid grid-cols-3 gap-3">
+                         <FormField
+                            control={form.control}
+                            name="dob_day"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                <Input placeholder="Day" type="number" {...field} />
+                                </FormControl>
+                            </FormItem>
+                            )}
                         />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                        <FormField
+                            control={form.control}
+                            name="dob_month"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                <Input placeholder="Month" type="number" {...field} />
+                                </FormControl>
+                            </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="dob_year"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                <Input placeholder="Year" type="number" {...field} />
+                                </FormControl>
+                            </FormItem>
+                            )}
+                        />
+                    </div>
+                    <FormMessage>{form.formState.errors.dob_day?.message}</FormMessage>
+                </FormItem>
               <FormField
                 control={form.control}
                 name="collegeName"
