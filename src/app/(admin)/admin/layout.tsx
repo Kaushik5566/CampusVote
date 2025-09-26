@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth-provider';
 import {
@@ -70,17 +70,22 @@ function AdminSidebarNav() {
 
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    if (!user || user.type !== 'admin') {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient && (!user || user.type !== 'admin')) {
       router.push('/admin/login');
     }
-  }, [user, router]);
+  }, [user, router, isClient]);
 
-  if (!user || user.type !== 'admin') {
-    return <div className="flex h-screen w-full items-center justify-center"><p>Redirecting to login...</p></div>;
+  if (!isClient || !user || user.type !== 'admin') {
+    return <div className="flex h-screen w-full items-center justify-center"><p>Loading...</p></div>;
   }
   
   return (

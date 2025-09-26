@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth-provider';
 import { Footer } from '@/components/footer';
@@ -14,17 +14,22 @@ export default function VoterLayout({
 }) {
   const { user } = useAuth();
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    if (!user || user.type !== 'student') {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient && (!user || user.type !== 'student')) {
       router.push('/login');
     }
-  }, [user, router]);
+  }, [user, router, isClient]);
 
-  if (!user || user.type !== 'student') {
+  if (!isClient || !user || user.type !== 'student') {
     return (
         <div className="flex h-screen w-full items-center justify-center">
-            <p>Redirecting to login...</p>
+            <p>Loading...</p>
         </div>
     );
   }
