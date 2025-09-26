@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -101,24 +101,28 @@ export default function StudentRegisterPage() {
                   <FormItem className="flex flex-col">
                     <FormLabel>Date of birth</FormLabel>
                     <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-full pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
+                      <div className="relative flex items-center">
+                          <FormControl>
+                                <Input
+                                placeholder="MM/DD/YYYY"
+                                value={field.value ? format(field.value, 'MM/dd/yyyy') : ''}
+                                onChange={(e) => {
+                                    const date = parse(e.target.value, 'MM/dd/yyyy', new Date());
+                                    if (!isNaN(date.getTime())) {
+                                        field.onChange(date);
+                                    } else {
+                                        // Allow clearing the field or handle invalid input
+                                        field.onChange(undefined);
+                                    }
+                                }}
+                                />
+                          </FormControl>
+                          <PopoverTrigger asChild>
+                                <Button variant="ghost" className="absolute right-0 h-full px-3" aria-label="Open calendar">
+                                    <CalendarIcon className="h-4 w-4 opacity-50" />
+                                </Button>
+                          </PopoverTrigger>
+                      </div>
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
@@ -128,6 +132,9 @@ export default function StudentRegisterPage() {
                             date > new Date() || date < new Date('1900-01-01')
                           }
                           initialFocus
+                          captionLayout="dropdown-nav"
+                          fromYear={1950}
+                          toYear={new Date().getFullYear()}
                         />
                       </PopoverContent>
                     </Popover>
