@@ -154,26 +154,32 @@ export default function StudentRegisterPage() {
                 control={form.control}
                 name="dob"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
+                  <FormItem>
                     <FormLabel>Date of birth</FormLabel>
+                    <div className="relative">
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="MM/DD/YYYY"
+                        value={field.value ? format(field.value, 'MM/dd/yyyy') : ''}
+                        onChange={(e) => {
+                          const date = new Date(e.target.value);
+                          if (!isNaN(date.getTime())) {
+                            field.onChange(date);
+                          }
+                        }}
+                        className="pr-10"
+                      />
+                    </FormControl>
                     <Popover>
                       <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground"
+                        >
+                          <CalendarIcon className="h-5 w-5" />
+                        </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
@@ -187,6 +193,7 @@ export default function StudentRegisterPage() {
                         />
                       </PopoverContent>
                     </Popover>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
