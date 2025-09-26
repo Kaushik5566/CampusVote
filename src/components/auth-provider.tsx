@@ -65,7 +65,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const storedElectionHistory = sessionStorage.getItem('electionHistory');
 
       if (storedUser) {
-        setUser(JSON.parse(storedUser));
+        setUser(JSON.parse(storedUser, (key, value) => {
+          if (key === 'dob') return new Date(value);
+          return value;
+        }));
       }
       if (storedCandidates) {
         setCandidates(JSON.parse(storedCandidates));
@@ -74,7 +77,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setResultsPublished(JSON.parse(storedResults));
       }
       if (storedUsers) {
-        setUsers(JSON.parse(storedUsers));
+        setUsers(JSON.parse(storedUsers, (key, value) => {
+          if (key === 'dob') return new Date(value);
+          return value;
+        }));
       }
       if (storedAdmins) {
         setAdmins(JSON.parse(storedAdmins));
@@ -185,7 +191,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
       const newStudent: User = { 
-          ...newUser, 
+          ...newUser,
+          dob: newUser.dob,
           collegeName: newUser.collegeName || 'N/A', 
           course: newUser.course || 'N/A',
           year: newUser.year,

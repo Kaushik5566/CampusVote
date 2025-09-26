@@ -3,8 +3,8 @@ import type { User, Admin, Candidate, CandidatePosition } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
 export const mockUsers: User[] = [
-  { id: 'student1@college.edu', name: 'John Doe', collegeName: 'State University', course: 'BSC-IT', year: 'SY', type: 'student', hasVoted: false },
-  { id: 'student2@college.edu', name: 'Jane Smith', collegeName: 'City College', course: 'BCOM', year: 'TY', type: 'student', hasVoted: true },
+  { id: 'student1@college.edu', name: 'John Doe', dob: new Date('1998-05-21'), collegeName: 'State University', course: 'BSC-IT', year: 'SY', type: 'student', hasVoted: false },
+  { id: 'student2@college.edu', name: 'Jane Smith', dob: new Date('2000-08-15'), collegeName: 'City College', course: 'BCOM', year: 'TY', type: 'student', hasVoted: true },
 ];
 
 export const mockAdmins: Admin[] = [
