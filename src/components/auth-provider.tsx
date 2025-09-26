@@ -42,8 +42,12 @@ const loadState = <T,>(key: string, defaultValue: T, reviver?: (key: any, value:
     if (typeof window === 'undefined') return defaultValue;
     try {
         const storedValue = sessionStorage.getItem(key);
+        // Only parse if storedValue is not null, not undefined, and not an empty string
         if (storedValue) {
-            return JSON.parse(storedValue, reviver);
+            const parsed = JSON.parse(storedValue, reviver);
+            // Ensure we don't return null or undefined if that's what was parsed,
+            // unless the default value is also null or undefined.
+            return parsed !== null && parsed !== undefined ? parsed : defaultValue;
         }
     } catch (error) {
         console.error(`Failed to parse ${key} from sessionStorage`, error);
@@ -339,3 +343,5 @@ export function useAuth() {
   }
   return context;
 }
+
+    
