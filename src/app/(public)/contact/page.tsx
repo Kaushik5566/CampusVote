@@ -23,7 +23,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Mail, Phone } from 'lucide-react';
 import { useState } from 'react';
 import { useFirebase } from '@/firebase';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -124,6 +124,26 @@ export default function ContactPage() {
               </Button>
             </form>
           </Form>
+        </CardContent>
+      </Card>
+      <Card className="w-full shadow-2xl mt-8">
+        <CardHeader>
+            <CardTitle>Contact Information</CardTitle>
+            <CardDescription>You can also reach out to me directly.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+            <div className="flex items-center gap-4">
+                <Mail className="h-5 w-5 text-muted-foreground" />
+                <a href="mailto:your-email@example.com" className="text-primary hover:underline">
+                    your-email@example.com
+                </a>
+            </div>
+            <div className="flex items-center gap-4">
+                <Phone className="h-5 w-5 text-muted-foreground" />
+                <a href="tel:+911234567890" className="text-primary hover:underline">
+                    +91 12345 67890
+                </a>
+            </div>
         </CardContent>
       </Card>
     </div>
