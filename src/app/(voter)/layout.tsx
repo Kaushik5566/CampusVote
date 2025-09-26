@@ -1,9 +1,11 @@
+
 'use client';
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth-provider';
 import { Footer } from '@/components/footer';
+import { VoterHeader } from '@/components/voter/voter-header';
 
 export default function VoterLayout({
   children,
@@ -28,7 +30,8 @@ export default function VoterLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950">
+      <VoterHeader />
       <main className="flex-1">{children}</main>
       <Footer />
     </div>
