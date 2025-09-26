@@ -33,6 +33,8 @@ type AuthContextType = {
   admins: Admin[];
   addAdmin: (admin: Omit<Admin, 'type'>) => boolean;
   deleteAdmin: (adminId: string) => boolean;
+  users: User[];
+  deleteStudent: (studentId: string) => void;
   isLoaded: boolean;
   positions: string[];
 };
@@ -336,9 +338,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAdmins(prev => prev.filter(a => a.id !== adminId));
     return true;
   };
+
+  const deleteStudent = (studentId: string) => {
+    setUsers(prev => prev.filter(u => u.id !== studentId));
+  }
   
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection, updateStudentDetails, findStudentByEmail, verifySecurityAnswer, resetStudentPassword, admins, addAdmin, deleteAdmin, isLoaded, positions }}>
+    <AuthContext.Provider value={{ user, login, logout, register, candidates, submitVote, addCandidate, updateCandidate, deleteCandidate, resultsPublished, setResultsPublished, votingStartDate, votingEndDate, setVotingStartDate, setVotingEndDate, electionHistory, archiveCurrentElection, updateStudentDetails, findStudentByEmail, verifySecurityAnswer, resetStudentPassword, admins, addAdmin, deleteAdmin, users, deleteStudent, isLoaded, positions }}>
       {children}
     </AuthContext.Provider>
   );

@@ -3,7 +3,7 @@
 
 import { useAuth } from '@/components/auth-provider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Vote, Calendar, UserPlus } from 'lucide-react';
+import { Users, Vote, Calendar, UserPlus, GraduationCap } from 'lucide-react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,7 @@ function StatCard({ icon: Icon, title, value, footer }: { icon: React.ElementTyp
 }
 
 export default function AdminDashboardPage() {
-    const { candidates, votingStartDate, votingEndDate, admins } = useAuth();
+    const { candidates, votingStartDate, votingEndDate, admins, users } = useAuth();
     const totalVotes = candidates.reduce((sum, candidate) => sum + candidate.votes, 0);
 
     return (
@@ -47,10 +47,10 @@ export default function AdminDashboardPage() {
                     footer="Across all positions"
                 />
                  <StatCard 
-                    icon={UserPlus}
-                    title="Total Admins"
-                    value={admins.length}
-                    footer="Number of admin accounts"
+                    icon={GraduationCap}
+                    title="Total Students"
+                    value={users.length}
+                    footer="Registered student accounts"
                 />
                 <StatCard 
                     icon={Calendar}
@@ -70,14 +70,14 @@ export default function AdminDashboardPage() {
                         <Button asChild variant="outline">
                             <Link href="/admin/candidates">Manage Candidates</Link>
                         </Button>
+                         <Button asChild variant="outline">
+                            <Link href="/admin/students">Manage Students</Link>
+                        </Button>
                         <Button asChild variant="outline">
                             <Link href="/admin/results">View Live Results</Link>
                         </Button>
                          <Button asChild variant="outline">
                             <Link href="/admin/manage-admins">Manage Admins</Link>
-                        </Button>
-                        <Button asChild variant="outline">
-                            <Link href="/admin/messages">Check Messages</Link>
                         </Button>
                         <Button asChild variant="outline" className="col-span-2">
                             <Link href="/admin/history">View History</Link>
@@ -91,6 +91,7 @@ export default function AdminDashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <p>The election is currently in progress. You can monitor live results, manage candidates, and view incoming messages from the respective sections.</p>
+                        <p className="mt-4">Total Admins: <span className="font-bold">{admins.length}</span></p>
                     </CardContent>
                 </Card>
             </div>

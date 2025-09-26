@@ -12,7 +12,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Menu, Users, BarChart2, LogOut, MessageSquare, History, Home, UserPlus } from 'lucide-react';
+import { Menu, Users, BarChart2, LogOut, MessageSquare, History, Home, UserPlus, GraduationCap } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -27,6 +27,7 @@ function AdminSidebarNav() {
   const navItems = [
     { href: '/admin/dashboard', icon: Home, label: 'Dashboard' },
     { href: '/admin/candidates', icon: Users, label: 'Candidates' },
+    { href: '/admin/students', icon: GraduationCap, label: 'Students' },
     { href: '/admin/results', icon: BarChart2, label: 'Results' },
     { href: '/admin/messages', icon: MessageSquare, label: 'Messages' },
     { href: '/admin/history', icon: History, label: 'History' },
@@ -78,13 +79,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    if (isLoaded && (!user || user.type !== 'admin')) {
-      router.push('/admin/login');
-    }
-  }, [user, isLoaded, router]);
+  if (!isClient) {
+    return null;
+  }
+  
+  if (isLoaded && (!user || user.type !== 'admin')) {
+    router.push('/admin/login');
+    return null;
+  }
 
-  if (!isLoaded || !user || user.type !== 'admin') {
+  if (!isLoaded || !user) {
     return null;
   }
   
