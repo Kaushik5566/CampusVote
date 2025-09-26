@@ -161,7 +161,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (admin) {
       if (admin.password === pass) {
          setUser(admin);
-         router.push('/admin/candidates');
+         router.push('/admin/dashboard');
          return true;
       } else {
         toast({
