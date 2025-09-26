@@ -1,10 +1,13 @@
+
 'use client';
 
 import { useAuth } from '@/components/auth-provider';
 import { ResultsChart } from '@/components/results/results-chart';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Lock } from 'lucide-react';
+import { Lock, Trophy } from 'lucide-react';
+import { positions } from '@/lib/data';
+import { Badge } from '@/components/ui/badge';
 
 export default function ResultsPage() {
   const { candidates, resultsPublished } = useAuth();
@@ -26,6 +29,18 @@ export default function ResultsPage() {
   }
   
   const sortedCandidates = [...candidates].sort((a, b) => b.votes - a.votes);
+
+  const winners = positions.reduce((acc, position) => {
+    const positionCandidates = candidates.filter(c => c.position === position);
+    if (positionCandidates.length > 0) {
+      const winner = positionCandidates.reduce((prev, current) => (prev.votes > current.votes) ? prev : current);
+      if(winner.votes > 0) {
+        acc[position] = winner.id;
+      }
+    }
+    return acc;
+  }, {} as Record<string, string>);
+
 
   return (
     <div className="container mx-auto max-w-5xl py-12 px-4">
@@ -56,9 +71,17 @@ export default function ResultsPage() {
               </TableHeader>
               <TableBody>
                 {sortedCandidates.map((candidate, index) => (
-                  <TableRow key={candidate.id}>
+                  <TableRow key={candidate.id} className={winners[candidate.position] === candidate.id ? 'bg-green-50 dark:bg-green-900/30' : ''}>
                     <TableCell className="font-medium">{index + 1}</TableCell>
-                    <TableCell>{candidate.name}</TableCell>
+                    <TableCell className="font-medium flex items-center gap-2">
+                      {candidate.name}
+                      {winners[candidate.position] === candidate.id && (
+                          <Badge variant="default" className="bg-yellow-500 hover:bg-yellow-600 text-white">
+                              <Trophy className="h-3 w-3 mr-1" />
+                              Winner
+                          </Badge>
+                      )}
+                    </TableCell>
                     <TableCell>{candidate.position}</TableCell>
                     <TableCell className="text-right font-bold">{candidate.votes}</TableCell>
                   </TableRow>
