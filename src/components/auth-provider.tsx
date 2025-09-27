@@ -74,36 +74,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
-        const storedUser = sessionStorage.getItem('user');
+        const storedUser = localStorage.getItem('user');
         if (storedUser) setUser(JSON.parse(storedUser, dateReviver));
 
-        const storedCandidates = sessionStorage.getItem('candidates');
+        const storedCandidates = localStorage.getItem('candidates');
         if (storedCandidates) {
           const parsedCandidates = JSON.parse(storedCandidates, dateReviver);
           setCandidates(parsedCandidates);
           setPositions([...new Set(parsedCandidates.map((c: Candidate) => c.position))]);
         }
         
-        const storedResultsPublished = sessionStorage.getItem('resultsPublished');
+        const storedResultsPublished = localStorage.getItem('resultsPublished');
         if (storedResultsPublished) setResultsPublished(JSON.parse(storedResultsPublished));
         
-        const storedVotingStartDate = sessionStorage.getItem('votingStartDate');
+        const storedVotingStartDate = localStorage.getItem('votingStartDate');
         if (storedVotingStartDate) setVotingStartDate(new Date(JSON.parse(storedVotingStartDate)));
 
-        const storedVotingEndDate = sessionStorage.getItem('votingEndDate');
+        const storedVotingEndDate = localStorage.getItem('votingEndDate');
         if (storedVotingEndDate) setVotingEndDate(new Date(JSON.parse(storedVotingEndDate)));
 
-        const storedUsers = sessionStorage.getItem('users');
+        const storedUsers = localStorage.getItem('users');
         if (storedUsers) setUsers(JSON.parse(storedUsers, dateReviver));
 
-        const storedAdmins = sessionStorage.getItem('admins');
+        const storedAdmins = localStorage.getItem('admins');
         if (storedAdmins) setAdmins(JSON.parse(storedAdmins, dateReviver));
 
-        const storedElectionHistory = sessionStorage.getItem('electionHistory');
+        const storedElectionHistory = localStorage.getItem('electionHistory');
         if (storedElectionHistory) setElectionHistory(JSON.parse(storedElectionHistory, dateReviver));
 
     } catch (error) {
-        console.error("Failed to load state from sessionStorage", error);
+        console.error("Failed to load state from localStorage", error);
     }
     setIsLoaded(true);
   }, []);
@@ -112,22 +112,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (isLoaded) {
         try {
             if (user) {
-                sessionStorage.setItem('user', JSON.stringify(user));
+                localStorage.setItem('user', JSON.stringify(user));
             } else {
-                sessionStorage.removeItem('user');
+                localStorage.removeItem('user');
             }
-            sessionStorage.setItem('candidates', JSON.stringify(candidates));
-            sessionStorage.setItem('resultsPublished', JSON.stringify(resultsPublished));
-            sessionStorage.setItem('votingStartDate', JSON.stringify(votingStartDate));
-            sessionStorage.setItem('votingEndDate', JSON.stringify(votingEndDate));
-            sessionStorage.setItem('users', JSON.stringify(users));
-            sessionStorage.setItem('admins', JSON.stringify(admins));
-            sessionStorage.setItem('electionHistory', JSON.stringify(electionHistory));
+            localStorage.setItem('candidates', JSON.stringify(candidates));
+            localStorage.setItem('resultsPublished', JSON.stringify(resultsPublished));
+            localStorage.setItem('votingStartDate', JSON.stringify(votingStartDate));
+            localStorage.setItem('votingEndDate', JSON.stringify(votingEndDate));
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('admins', JSON.stringify(admins));
+            localStorage.setItem('electionHistory', JSON.stringify(electionHistory));
 
             setPositions([...new Set(candidates.map(c => c.position))]);
 
         } catch (error) {
-            console.error("Failed to save state to sessionStorage", error);
+            console.error("Failed to save state to localStorage", error);
         }
     }
   }, [user, candidates, resultsPublished, votingStartDate, votingEndDate, users, admins, electionHistory, isLoaded]);
@@ -163,7 +163,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       const newStudent: User = { 
           ...newUser,
-          id: `user-${Date.now()}`,
+          id: newUser.email,
           email: newUser.email,
           rollNo: newUser.rollNo,
           collegeName: newUser.collegeName || 'N/A', 
@@ -191,7 +191,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const userType = user?.type;
     setUser(null);
     if (typeof window !== 'undefined') {
-      sessionStorage.clear();
+      localStorage.clear();
     }
     
     if (userType === 'admin') {
