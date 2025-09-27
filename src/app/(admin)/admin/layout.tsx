@@ -73,23 +73,15 @@ function AdminSidebarNav() {
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, isLoaded } = useAuth();
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return null;
-  }
   
-  if (isLoaded && (!user || user.type !== 'admin')) {
-    router.push('/admin/login');
-    return null;
-  }
+  useEffect(() => {
+    if (isLoaded && (!user || user.type !== 'admin')) {
+      router.push('/admin/login');
+    }
+  }, [user, isLoaded, router]);
 
-  if (!isLoaded || !user) {
-    return null;
+  if (!isLoaded || !user || user.type !== 'admin') {
+    return null; // Or a loading spinner
   }
   
   return (

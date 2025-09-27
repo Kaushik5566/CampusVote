@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth-provider';
 import { Footer } from '@/components/footer';
@@ -22,7 +22,7 @@ export default function VoterLayout({
   }, [user, isLoaded, router]);
 
   if (!isLoaded || !user || user.type !== 'student') {
-    return null;
+    return null; // Or a loading spinner
   }
 
   return (
