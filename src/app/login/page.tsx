@@ -65,7 +65,7 @@ export default function StudentLoginPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>College Email</FormLabel>
+                    <FormLabel>Student Email</FormLabel>
                     <FormControl>
                       <Input placeholder="student@college.edu" {...field} />
                     </FormControl>

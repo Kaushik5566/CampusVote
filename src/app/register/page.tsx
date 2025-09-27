@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -122,7 +123,7 @@ export default function StudentRegisterPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>College Email</FormLabel>
+                    <FormLabel>Student Email</FormLabel>
                     <FormControl>
                       <Input placeholder="student@college.edu" {...field} />
                     </FormControl>
