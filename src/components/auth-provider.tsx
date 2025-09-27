@@ -148,15 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             return true;
         }
     }
-
-    setLoginError(true);
     return false;
-  };
-
-  const setLoginError = (isError: boolean) => {
-    // This is a placeholder function. The actual implementation in the login page
-    // will use its own local state to show/hide the error message.
-    // The key change is that `login` now reliably returns false on failure.
   };
 
   const register = (newUser: AuthUser, type: 'student' | 'admin'): boolean => {
