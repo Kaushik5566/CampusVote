@@ -162,10 +162,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
       const newStudent: User = { 
-          ...newUser,
           id: newUser.email,
           email: newUser.email,
+          name: newUser.name,
           rollNo: newUser.rollNo,
+          dob: newUser.dob,
           collegeName: newUser.collegeName || 'N/A', 
           course: newUser.course || 'N/A',
           year: newUser.year,
@@ -191,7 +192,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const userType = user?.type;
     setUser(null);
     if (typeof window !== 'undefined') {
-      localStorage.clear();
+      localStorage.removeItem('user');
     }
     
     if (userType === 'admin') {
