@@ -10,7 +10,8 @@ export type Candidate = {
 };
 
 export type User = {
-  id: string; // email or college ID
+  id: string; // unique generated id
+  email: string; // college email
   name: string;
   rollNo: string;
   dob: Date;
@@ -32,7 +33,7 @@ export type Admin = {
 };
 
 export type AuthUser = {
-    id: string;
+    email: string;
     name: string;
     rollNo: string;
     dob: Date;

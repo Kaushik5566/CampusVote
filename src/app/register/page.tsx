@@ -73,7 +73,7 @@ export default function StudentRegisterPage() {
     setIsLoading(true);
     setTimeout(() => {
         const success = register({
-            id: values.email,
+            email: values.email,
             name: values.name,
             rollNo: values.rollNo,
             dob: values.dob,
@@ -82,6 +82,7 @@ export default function StudentRegisterPage() {
             year: values.year,
             securityQuestion: 'Whom do you consider your role model?',
             securityAnswer: values.securityAnswer,
+            password: values.password,
         }, 'student');
 
         if (success) {

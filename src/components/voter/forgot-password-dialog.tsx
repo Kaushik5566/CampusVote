@@ -84,7 +84,7 @@ export function ForgotPasswordDialog({ children }: { children: React.ReactNode }
     if (!student) return;
     setIsLoading(true);
     setTimeout(() => {
-        const isCorrect = verifySecurityAnswer(student.id, values.answer);
+        const isCorrect = verifySecurityAnswer(student.email, values.answer);
         if (isCorrect) {
           setStep('reset');
         } else {
@@ -102,7 +102,7 @@ export function ForgotPasswordDialog({ children }: { children: React.ReactNode }
     if (!student) return;
     setIsLoading(true);
     setTimeout(() => {
-        const success = resetStudentPassword(student.id, values.newPassword);
+        const success = resetStudentPassword(student.email, values.newPassword);
         if (success) {
           toast({
             title: 'Password Reset Successful',

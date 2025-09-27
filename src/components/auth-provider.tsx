@@ -132,16 +132,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, candidates, resultsPublished, votingStartDate, votingEndDate, users, admins, electionHistory, isLoaded]);
 
-  const login = (id: string, pass: string, userType: 'student' | 'admin'): boolean => {
+  const login = (emailOrUsername: string, pass: string, userType: 'student' | 'admin'): boolean => {
     if (userType === 'student') {
-        const student = users.find(u => u.id === id);
+        const student = users.find(u => u.email === emailOrUsername);
         if (student && student.password === pass) {
             setUser(student);
             router.push('/dashboard');
             return true;
         }
     } else if (userType === 'admin') {
-        const admin = admins.find(a => a.id === id);
+        const admin = admins.find(a => a.id === emailOrUsername);
         if (admin && admin.password === pass) {
             setUser(admin);
             router.push('/admin/dashboard');
@@ -153,7 +153,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = (newUser: AuthUser, type: 'student' | 'admin'): boolean => {
     if(type === 'student'){
-      if (users.find(u => u.id === newUser.id)) {
+      if (users.find(u => u.email === newUser.email)) {
         toast({
           title: 'Registration Failed',
           description: 'A student with this email already exists.',
@@ -163,6 +163,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       const newStudent: User = { 
           ...newUser,
+          id: `user-${Date.now()}`,
+          email: newUser.email,
           rollNo: newUser.rollNo,
           collegeName: newUser.collegeName || 'N/A', 
           course: newUser.course || 'N/A',
@@ -283,7 +285,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const findStudentByEmail = (email: string): User | undefined => {
-    return users.find(u => u.id === email);
+    return users.find(u => u.email === email);
   };
 
   const verifySecurityAnswer = (email: string, answer: string): boolean => {
@@ -293,11 +295,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const resetStudentPassword = (email: string, newPassword: string): boolean => {
-      const studentExists = users.some(u => u.id === email);
+      const studentExists = users.some(u => u.email === email);
       if (!studentExists) {
         return false;
       }
-      setUsers(prevUsers => prevUsers.map(u => u.id === email ? {...u, password: newPassword} : u));
+      setUsers(prevUsers => prevUsers.map(u => u.email === email ? {...u, password: newPassword} : u));
       return true;
   };
 

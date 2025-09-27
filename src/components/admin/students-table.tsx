@@ -66,7 +66,7 @@ export function StudentsTable() {
         {users.map((student) => (
           <TableRow key={student.id}>
             <TableCell className="font-medium">{student.name}</TableCell>
-            <TableCell>{student.id}</TableCell>
+            <TableCell>{student.email}</TableCell>
             <TableCell>{student.course}{student.year && ` (${student.year})`}</TableCell>
             <TableCell>{student.rollNo}</TableCell>
             <TableCell>
